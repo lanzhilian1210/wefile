@@ -1,48 +1,67 @@
-@media screen and (max-width:550px){
+
+@media screen and (max-width:684px) {
 	.header-wrapper{
-		margin: 0 20px;
-        height: 80px;
-		padding-top: 30px;
-        border-bottom: 1px solid #E0E0E0;
-        position: relative;
-	}
-	.logoText,.banner{
-		display: none !important;	
-	}
-}
-@media screen and (max-width:684px) and (min-width:550px){
-	.header-wrapper{
-		margin: 0 20px;
-		height: 80px;
+		margin: 0 40px;
+		height: 110px;
         padding-top: 30px;
         border-bottom: 1px solid #E0E0E0;
         position: relative;
 	}
-	.logoText{
-		display: none;
+	.logoText,.banner,.btC{
+		display: none !important;	
+	}
+	.textCon{
+		margin-bottom: 80px;
+		flex:0 0 100%;
+	}
+	.footerBt{
+		width: 100%;
+		height: 25px;
+		float: left;
+		position: relative;
+	}
+	.btL,.btR{
+		width: 100%;
+		font: 18px/25px "微软雅黑";
+		color: #333;
+		text-align: center;
+		position: absolute;
+	}
+	.btL{
+		left: 0;
+		top: 50px;
+	}
+	.btR{
+		left: 0;
+		top: 20px;
 	}
 }
 @media screen and (min-width:684px) and (max-width:768px){
 	.header-wrapper{
-		margin-left:80px;
-		margin-right:80px;
-        height: 80px;
-       
+		margin: 0 40px;
+        height: 110px;  
         padding-top: 30px;
         border-bottom: 1px solid #E0E0E0;
         position: relative;
 	}
 	.logoText{
-		
 		display: none;
+	}
+	.textCon{
+		margin-bottom: 80px;
+		flex:0 0 45%;
+	}
+	.footerBt{
+		width: 100%;
+		display: flex;
+		height: 25px;
+		justify-content: space-between;
 	}
 }
-@media screen  and (min-width:768px) and (max-width:992px){
+@media screen and (min-width:768px) and (max-width:1200px){
 	.header-wrapper{
-		margin-left:80px;
-		margin-right:80px;
-        height: 80px;
-       
+		margin: 0 40px;
+        height: 110px;
         padding-top: 30px;
         border-bottom: 1px solid #E0E0E0;
         position: relative;
@@ -50,29 +69,39 @@
 	.logoText{
 		display: none;
 	}
-}
-@media screen and (min-width:992px) and (max-width:1200px){
-	.header-wrapper{
-		margin-left:80px;
-		margin-right:80px;
-        height: 80px;
-       
-        padding-top: 30px;
-        border-bottom: 1px solid #E0E0E0;
-        position: relative;
+	.textCon{
+		margin-bottom: 80px;
+		flex:0 0 45%;
 	}
-	.logoText{
-		display: none;
+	.footerBt{
+		width: 100%;
+		display: flex;
+		height: 25px;
+		justify-content: space-between;
 	}
-	
 }
 @media screen and (min-width:1200px){
     .header-wrapper{
         width: 1200px;
-        height: 80px;
-       margin:0 auto;
+        height: 110px;
+       	margin:0 auto;
         padding-top: 30px;
         border-bottom: 1px solid #E0E0E0;
         position: relative;
-    }
+	}
+	.textCon{
+		margin-bottom: 80px;
+		flex:0 0 30%;
+	}
+	.footerBt{
+		width: 100%;
+		display: flex;
+		height: 25px;
+		justify-content: space-between;
+	}
+	.btL,.btC,.btR{
+		height: 100%;
+		font: 18px/42px "微软雅黑";
+		color: #333;
+	}
 }

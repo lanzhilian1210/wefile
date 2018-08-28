@@ -10,12 +10,26 @@
             <div class="register">注册</div>
         </div>
     </div>
+    <fileInput></fileInput>
+    <fileText></fileText>
+    <footerFile></footerFile>
 </div>
 </template>
+<script>
+    import fileInput from '../components/fileInput';
+    import fileText from '../components/fileText';
+    import footerFile from '../components/footerFile';
+    export default{
+        components:{
+            fileInput,fileText,footerFile
+        }
+    }
+</script>
 <style>
 .pageWapper{
     height: 100%;
-    width: 100%;  
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .logo{
@@ -63,7 +77,7 @@
     font:20px/52px "微软雅黑";
     color:#fff;
     margin-left:36px;
-    background:#0275D8;
+    background:#215FFF;
     width:84px;
     text-align:center;
     border-radius:10px;
