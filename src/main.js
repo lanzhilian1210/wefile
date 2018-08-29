@@ -6,8 +6,10 @@ import router from './router'
 import './assets/reset.css'
 import './assets/media.css'
 Vue.config.productionTip = false
-
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 /* eslint-disable no-new */
+Vue.use(ElementUI);
 new Vue({
   el: '#app',
   router,

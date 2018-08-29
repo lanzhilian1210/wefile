@@ -1,15 +1,20 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import home from '@/pages/home'
-
+const Home = () => import('@/pages/home')
+const Price = () => import('@/pages/price')
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: home
+      name: 'Home',
+      component: Home
+    },
+    {
+      path: '/price',
+      name: 'Price',
+      component: Price
     }
   ]
 })
