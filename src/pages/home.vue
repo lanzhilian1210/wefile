@@ -1,9 +1,9 @@
 <template>
 <div class="pageWapper">
-    <fileHeader></fileHeader>
+    <!-- <fileHeader></fileHeader> -->
     <fileInput></fileInput>
-    <fileText></fileText>
-    <footerFile></footerFile>
+    <!-- <fileText></fileText>
+    <footerFile></footerFile> -->
 </div>
 </template>
 <script>
