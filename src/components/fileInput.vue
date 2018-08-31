@@ -38,11 +38,11 @@
             handleChange(file,fileList){
                 let index = file.raw.type.indexOf('/');
                 // 文件大小 大于1024kb 用单位MB
-                if(file.size/1024 > 1024) {
-                    this.size = (file.size/1024)/1024 + 'MB'
+                if(file.size/1024 >= 1024) {
+                    this.size = Math.floor((file.size/1024)/1024) + 'MB'
                 };
                 if(file.size/1024 < 1024) {
-                    this.size = file.size/1024 + 'KB'
+                    this.size = Math.floor(file.size/1024) + 'KB'
                 }; 
                 // 判断文件类型
                 let fileType = file.raw.type.substring(index+1);
