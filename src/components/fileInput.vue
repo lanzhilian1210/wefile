@@ -21,6 +21,7 @@
         <ul>
             <li v-for="(lis,index) in fileList" :key="index">
                 <span>{{lis.name}}</span>
+                <span>{{lis.size}}</span>
             </li>
         </ul>
     </div>
@@ -30,11 +31,19 @@
         data() {
             return {
                 fileList:[],
+                size:0,
             }
         },
         methods:{
             handleChange(file,fileList){
                 let index = file.raw.type.indexOf('/');
+                // 文件大小 大于1024kb 用单位MB
+                if(file.size/1024 > 1024) {
+                    this.size = (file.size/1024)/1024 + 'MB'
+                };
+                if(file.size/1024 < 1024) {
+                    this.size = file.size/1024 + 'KB'
+                }; 
                 // 判断文件类型
                 let fileType = file.raw.type.substring(index+1);
                 const ispdf = fileType == 'pdf';
@@ -48,7 +57,7 @@
                         this.fileList.push({
                             name: file.name,
                             url: file.url,
-                            size: file.size
+                            size: this.size
                         })
                         arr.push(file.name);
                     } else {                    
@@ -59,7 +68,7 @@
                              this.fileList.push({
                                 name: file.name,
                                 url: file.url,
-                                size: file.size
+                                size: this.size
                                 })
                         } else {
                            this.$message.error('文件已上传'); 
