@@ -17,11 +17,11 @@
             </div>
         </el-upload>
         <ul class="uploadList">
-            <li v-for="(lis,index) in fileList" :key="index" @mouseover="handleOver" @mouseout="handleLeave">
+            <li v-for="(lis,index) in fileList" :key="index" @mouseover="handleOver(index)" @mouseout="handleLeave(index)">
                 <span>{{lis.name}}</span>
                 <span>{{lis.size}}</span>
                 <span class="statusBtn">就绪</span>
-                <img src="../../static/img/delete.png" alt="" class="deleteLis" v-show="disBox">
+                <img src="../../static/img/delete.png" alt="" class="deleteLis" :class="{disBox: index === current}" @click="delteLis(index)">
                 <!-- <div class="progress" ref="progress"></div> -->
                 <el-progress :percentage="num"></el-progress>
             </li>
@@ -35,10 +35,10 @@
                 fileList:[],
                 size:0,
                 multiple: true, // 多选
-                disBox:false, //鼠标移入移出
                 fileName: '',
                 num:0,
                 timer: null,
+                current:-1,
             }
         },
         mounted() {
@@ -46,11 +46,15 @@
         },
         methods:{
             // 鼠标的移入移出
-            handleOver() {
-                this.disBox = true;
+            handleOver(index) {
+                this.current = index;
             },
-            handleLeave() {
-                this.disBox = false;
+            handleLeave(index) {
+                this.current = -1;
+            },
+            // 删除当前li
+            delteLis(index) {
+                this.fileList.splice(index,1)
             },
             handleChange(file,fileList){
                 let index = file.raw.type.indexOf('/');
@@ -105,9 +109,10 @@
                 // 请求接口
                 // this.$refs.upload.submit();
                 // 上传进度条
+                // console.log(fileList);
                 this.timer = setInterval(()=>{
                     this.num ++;
-                    if(this.num == 99) {
+                    if(this.num == 100) {
                         clearInterval(this.timer);
                     }
                 },50);
@@ -140,17 +145,19 @@
     display: none;
 }
 .uploadList{
-    margin: 30px 0;
-    border-bottom: 1px solid #333;
+    margin: 30px 0;   
 }
 .uploadList li{
     width: 100%;
     height: 98px;
     border: 1px solid #333;
-    border-bottom: none;
     font: 18px/98px "微软雅黑";
     color: #333;
     position: relative;
+    margin-top: -1px;
+}
+.uploadList li:nth-of-type(1){
+    margin-top: 0;
 }
 .uploadList li span,.uploadList li img{
     float: left;
@@ -158,6 +165,7 @@
 .deleteLis{
     height: 25px;
     width: 25px;
+    display: none;
 }
 .uploadList li span:nth-of-type(1){
     margin-left: 5%;
@@ -165,7 +173,7 @@
 .uploadList li span:nth-of-type(2){
         position: absolute;
         right: 28%;
-	}
+}
 .uploadList li img{
     position: absolute;
     top:36px;
@@ -210,5 +218,11 @@
 }
 .el-progress__text{
     display: none;
+}
+.disBox{
+    display: block;
+}
+.el-progress-bar__outer{
+    background: transparent;
 }
 </style>
