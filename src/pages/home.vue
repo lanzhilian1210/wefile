@@ -1,9 +1,9 @@
 <template>
 <div class="pageWapper">
     <!-- <fileHeader></fileHeader> -->
-    <fileInput></fileInput>
-    <!-- <fileText></fileText>
-    <footerFile></footerFile> -->
+    <fileInput @getMsg="getMsg"></fileInput>
+     <fileText v-show="isShow" ></fileText>
+    <!--<footerFile></footerFile> -->
 </div>
 </template>
 <script>
@@ -14,6 +14,16 @@
     export default{
         components:{
             fileInput,fileText,footerFile,fileHeader
+        },
+        data() {
+            return {
+                isShow: true,
+            }
+        },
+        methods:{
+            getMsg(status){
+                this.isShow = status;
+            }
         }
     }
 </script>
