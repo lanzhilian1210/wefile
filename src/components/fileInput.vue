@@ -18,7 +18,7 @@
                 <div class="el-upload__text">将需转换的PDF文件拖放至此<div class="seleTxt">选择文件</div></div>
             </div>
             <el-button size="small" type="primary" v-show="fileList.length">点击上传</el-button>
-            <div @click="submitUpload" class="fileTransfor" v-show="fileList.length">开始转换</div>
+            <div @click="abc">转换文件</div>
         </el-upload>
         <ul class="uploadList" style="margin-bottom:145px;">
             <li v-for="(lis,index) in fileList" :key="index" @mouseover="handleOver(index)" @mouseout="handleLeave(index)">
@@ -26,7 +26,7 @@
                 <span v-show="transfor">{{lis.size}}</span>
                 <span class="statusBtn" v-show="transfor">就绪</span>
                 <span class="statusTransfor" v-show="!transfor">正在转换</span>
-                <span class="cancel" v-show="!transfor" @click=cancelTransfor>取消</span>
+                <span class="cancel" v-show="!transfor" @click=cancelTransfor(index)>取消</span>
                 <img src="../../static/img/delete.png" alt="" class="deleteLis" :class="{disBox: index === current}" @click="delteLis(index)">
                 <!-- <div class="progress" ref="progress"></div> -->
                 <el-progress :percentage="num"></el-progress>
@@ -42,6 +42,7 @@
             </li>
         </ul>
         <div class="uploadBtn" v-show="fileList.length" >
+            <div @click="submitUpload" class="fileTransfor" v-show="fileList.length">开始转换</div>
         </div>
     </div>
 </template>
@@ -61,6 +62,10 @@
             }
         },
         methods:{
+            abc(){
+                // console.log(1);
+               this.$refs.upload.submit();
+            },
             // 鼠标的移入移出
             handleOver(index) {
                 this.current = index;
@@ -158,8 +163,16 @@
             },
             // 上传
             submitUpload() { 
-                // 请求接口
+                console.log(this.$refs.upload);
                  this.$refs.upload.submit();
+                // 请求接口
+                // this.axios.post('https://jsonplaceholder.typicode.com/posts/',this.fileList).then((res)=>{
+                //     console.log(res);
+                // }).catch(
+                //     (err)=>{
+                //         console.log(err);
+                //     }
+                // );
                 // 上传进度条
                 // console.log(fileList);
                 // this.timer = setInterval(()=>{
@@ -170,7 +183,7 @@
                 // },50);
             },
             // 取消上传
-            cancelTransfor() {
+            cancelTransfor(index) {
                 clearInterval(this.timer);
                 this.num = 0;
             },
@@ -179,6 +192,7 @@
                 console.log(e,file);
             },
             beforeAvatarUpload(file) {
+                console.log(file);
             }
         }
     }
@@ -330,12 +344,10 @@
     border-radius: 5px;
     margin-right: 35px;
     cursor: pointer;
-    position: fixed;
     display: inline-block;
     border-radius: 5px;
-    right: 100px;
-    bottom: 22px;
-    z-index: 11;
+    float: right;
+    margin: 36px;
 }
 .el-button--primary{
    width: 200px;
@@ -347,7 +359,7 @@
     position: fixed;
     display: inline-block;
     border-radius: 5px;
-    left: 100px;
+    left: 16%;
     bottom: 22px;
     z-index: 11;
     border: 1px solid #DCDFE6;

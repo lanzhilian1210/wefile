@@ -8,8 +8,10 @@ import './assets/media.css'
 Vue.config.productionTip = false
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import axios from 'axios'
 /* eslint-disable no-new */
 Vue.use(ElementUI);
+Vue.prototype.axios = axios
 new Vue({
   el: '#app',
   router,

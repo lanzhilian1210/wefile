@@ -2,7 +2,7 @@
 <div class="pageWapper">
     <!-- <fileHeader></fileHeader> -->
     <fileInput @getMsg="getMsg"></fileInput>
-     <fileText v-show="isShow" ></fileText>
+     <!-- <fileText v-show="isShow" ></fileText> -->
     <!--<footerFile></footerFile> -->
 </div>
 </template>

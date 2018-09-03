@@ -21,7 +21,8 @@
     },
     methods: {
       submitUpload() {
-        this.$refs.upload.submit();
+          console.log(this.$refs.upload);
+        // this.$refs.upload.submit();
       },
       handleRemove(file, fileList) {
         console.log(file, fileList);
