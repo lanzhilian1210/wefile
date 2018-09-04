@@ -139,7 +139,7 @@
                             name: this.name,
                             url: file.url,
                             size: this.size,
-                            num: 10,
+                            num: 0,
                             timer: null
                         })
                         fileListArr.push(file.name);
@@ -152,8 +152,8 @@
                                 name: this.name,
                                 url: file.url,
                                 size: this.size,
-                                num: 10,
-                                timer: null
+                                num: 0, //进度条
+                                timer: null // 定时器
                                 })
                         } else {
                            this.$message.error('文件已上传'); 
