@@ -18,7 +18,6 @@
                 <!-- <div class="el-upload__text">将需转换的PDF文件拖放至此<div class="seleTxt">选择文件</div></div> -->
             </div>
             <el-button size="small" type="primary" v-show="fileList.length">点击上传</el-button>
-            <div @click="abc($event)">转换文件</div>
         </el-upload>
         <ul class="uploadList" style="margin-bottom:145px;">
             <li v-for="(lis,index) in fileList" :key="index" @mouseover="handleOver(index)" @mouseout="handleLeave(index)">
@@ -26,10 +25,10 @@
                 <span v-show="transfor">{{lis.size}}</span>
                 <span class="statusBtn" v-show="transfor">就绪</span>
                 <span class="statusTransfor" v-show="!transfor">正在转换</span>
-                <span class="cancel" v-show="!transfor" @click=cancelTransfor(index)>取消</span>
+                <span class="cancel" v-show="!transfor" @click=cancelTransfor(lis)>取消</span>
                 <img src="../../static/img/delete.png" alt="" class="deleteLis" :class="{disBox: index === current}" @click="delteLis(index)">
                 <!-- <div class="progress" ref="progress"></div> -->
-                <el-progress :percentage="num" :class="{isShow:currentShow === index}"></el-progress>
+                <el-progress :percentage="lis.num" ></el-progress>
             </li>
         </ul>
 
@@ -55,7 +54,7 @@
                 size:0,
                 multiple: true, // 多选
                 fileName: '',
-                num:0,
+                num:[],
                 timer: null,
                 current:-1,
                 currentShow:-1,
@@ -63,12 +62,6 @@
             }
         },
         methods:{
-            abc(e){
-                e.stopPropagation();
-                 console.log(this.$refs.upload);
-            //    this.$refs.upload.onProgress();
-               this.$refs.upload.submit();
-            },
             // 鼠标的移入移出
             handleOver(index) {
                 this.current = index;
@@ -145,7 +138,9 @@
                         this.fileList.push({
                             name: this.name,
                             url: file.url,
-                            size: this.size
+                            size: this.size,
+                            num: 10,
+                            timer: null
                         })
                         fileListArr.push(file.name);
                     } else {                    
@@ -156,16 +151,27 @@
                              this.fileList.push({
                                 name: this.name,
                                 url: file.url,
-                                size: this.size
+                                size: this.size,
+                                num: 10,
+                                timer: null
                                 })
                         } else {
                            this.$message.error('文件已上传'); 
                         }
-                    }    
+                    } 
                 }
             },
             // 上传
             submitUpload() { 
+                this.fileList.forEach((e,i)=>{
+                    clearInterval(e.timer);
+                    e.timer = setInterval(()=>{
+                        e.num ++;
+                        if(e.num > 99){
+                            e.num = 100;
+                        }
+                    },20*(i+1))
+                })
                 // 请求接口
                 // this.axios.post('https://jsonplaceholder.typicode.com/posts/',this.fileList).then((res)=>{
                 //     console.log(res);
@@ -175,18 +181,13 @@
                 //     }
                 // );
                 // 上传进度条
-                // console.log(fileList);
-                this.timer = setInterval(()=>{
-                    this.num ++;
-                    if(this.num == 100) {
-                        clearInterval(this.timer);
-                    }
-                },50);
+                // console.log(fileList)
             },
             // 取消上传
-            cancelTransfor(index) {
+            cancelTransfor(lis) {
                 // 取消上传隐藏进度条
-                this.currentShow = index;
+                lis.num = 0;
+                clearInterval(lis.timer);
             },
             // 文件上传过程中
             uploadOnProgress(e,file){
