@@ -14,11 +14,11 @@
             :multiple="multiple"
             >
             <div class="minCont">
-                <img src="../../static/img/pdf.jpg" alt="" class="pdf">
-                <div class="el-upload__text">将需转换的PDF文件拖放至此<div class="seleTxt">选择文件</div></div>
+                <!-- <img src="../../static/img/pdf.jpg" alt="" class="pdf"> -->
+                <!-- <div class="el-upload__text">将需转换的PDF文件拖放至此<div class="seleTxt">选择文件</div></div> -->
             </div>
             <el-button size="small" type="primary" v-show="fileList.length">点击上传</el-button>
-            <div @click="abc">转换文件</div>
+            <div @click="abc($event)">转换文件</div>
         </el-upload>
         <ul class="uploadList" style="margin-bottom:145px;">
             <li v-for="(lis,index) in fileList" :key="index" @mouseover="handleOver(index)" @mouseout="handleLeave(index)">
@@ -29,7 +29,7 @@
                 <span class="cancel" v-show="!transfor" @click=cancelTransfor(index)>取消</span>
                 <img src="../../static/img/delete.png" alt="" class="deleteLis" :class="{disBox: index === current}" @click="delteLis(index)">
                 <!-- <div class="progress" ref="progress"></div> -->
-                <el-progress :percentage="num"></el-progress>
+                <el-progress :percentage="num" :class="{isShow:currentShow === index}"></el-progress>
             </li>
         </ul>
 
@@ -58,12 +58,15 @@
                 num:0,
                 timer: null,
                 current:-1,
+                currentShow:-1,
                 transfor: false, //转换状态
             }
         },
         methods:{
-            abc(){
-                // console.log(1);
+            abc(e){
+                e.stopPropagation();
+                 console.log(this.$refs.upload);
+            //    this.$refs.upload.onProgress();
                this.$refs.upload.submit();
             },
             // 鼠标的移入移出
@@ -163,8 +166,6 @@
             },
             // 上传
             submitUpload() { 
-                console.log(this.$refs.upload);
-                 this.$refs.upload.submit();
                 // 请求接口
                 // this.axios.post('https://jsonplaceholder.typicode.com/posts/',this.fileList).then((res)=>{
                 //     console.log(res);
@@ -175,21 +176,21 @@
                 // );
                 // 上传进度条
                 // console.log(fileList);
-                // this.timer = setInterval(()=>{
-                //     this.num ++;
-                //     if(this.num == 100) {
-                //         clearInterval(this.timer);
-                //     }
-                // },50);
+                this.timer = setInterval(()=>{
+                    this.num ++;
+                    if(this.num == 100) {
+                        clearInterval(this.timer);
+                    }
+                },50);
             },
             // 取消上传
             cancelTransfor(index) {
-                clearInterval(this.timer);
-                this.num = 0;
+                // 取消上传隐藏进度条
+                this.currentShow = index;
             },
             // 文件上传过程中
             uploadOnProgress(e,file){
-                console.log(e,file);
+                console.log(e);
             },
             beforeAvatarUpload(file) {
                 console.log(file);
@@ -385,5 +386,8 @@
     text-align: center;
     top: 34px;
     cursor: pointer;
+}
+.isShow{
+    display: none;
 }
 </style>
