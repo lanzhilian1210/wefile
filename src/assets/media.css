@@ -1,4 +1,4 @@
-@media screen and (max-width:684px) {
+@media screen and (max-width:550px) {
 	.header-wrapper{
 		margin: 0 40px;
 		height: 80px;
@@ -67,6 +67,126 @@
 	.el-slider{
 		width: 40% !important;
 	}
+	.uploadBtn{
+		width: 100%;
+		height: 110px;
+		position: fixed;
+		bottom: 0;
+		left: 50%;
+		margin-left: -50%;
+		z-index: 10;
+		background: #F9F9F9;
+	}
+	.clickBtn{
+		left: 4% !important;
+	}
+	.uploadList li{
+		height: 200px !important;
+	}
+	.uploadList li span{
+		float: left;
+		width: 100%;
+		text-align: center;
+		margin:0 auto !important;
+		line-height: 45px;
+		left: 0;
+		top: 0;
+		height: 45px;
+		position: relative;
+	}
+	.cancel{
+		width: 82px !important;
+	left: 164px !important;
+	border-radius: 10px;
+	}
+	.uploadList li img{
+		position: relative !important;
+		top: 70px !important;
+		right: -26% !important;
+	}
+}
+@media screen and (min-width:550px) and (max-width:684px) {
+	.header-wrapper{
+		margin: 0 40px;
+		height: 80px;
+        padding-top: 30px;
+        border-bottom: 1px solid #E0E0E0;
+        position: relative;
+	}
+	.logoText,.banner,.btC{
+		display: none !important;	
+	}
+	.textCon{
+		margin-bottom: 80px;
+		flex:0 0 100%;
+	}
+	.footerBt{
+		width: 100%;
+		height: 25px;
+		float: left;
+		position: relative;
+	}
+	.btL,.btR{
+		width: 100%;
+		font: 18px/25px "微软雅黑";
+		color: #333;
+		text-align: center;
+		position: absolute;
+	}
+	.btL{
+		left: 0;
+		top: 50px;
+	}
+	.btR{
+		left: 0;
+		top: 20px;
+	}
+	.priceTitle{
+		position: absolute;
+		top: 20px !important;
+		right: 0;
+		width: 100%;
+		text-align: center;
+	}
+	.iconImg{
+		display: none;
+	}
+	.priceList{
+		position: absolute;
+		right: 0;
+		width:100% !important;
+		top: 70px;
+		height: 210px;
+		padding-bottom: 40px;
+		text-align: center;
+		border-bottom: 1px solid #e0e0e0;
+	}
+	.allTitle,.countDis{
+		justify-content: space-around !important;
+	}
+	.countNum{
+		justify-content: flex-start !important;
+    	margin: 20px 20% 0;
+	}
+	.countNum span{
+		margin-right: 35px;
+	}
+	.el-slider{
+		width: 40% !important;
+	}
+	.uploadBtn{
+		width: 100%;
+		height: 110px;
+		position: fixed;
+		bottom: 0;
+		left: 50%;
+		margin-left: -50%;
+		z-index: 10;
+		background: #F9F9F9;
+	}
+	.clickBtn{
+		left: 4% !important;
+	}
 }
 @media screen and (min-width:684px) and (max-width:768px){
 	.header-wrapper{
@@ -97,6 +217,20 @@
 	.allTitle,.countDis,.countNum{
 		justify-content: space-around !important;
 	}
+	.uploadBtn{
+		width: 100%;
+		height: 110px;
+		position: fixed;
+		bottom: 0;
+		left: 50%;
+		margin-left: -50%;
+		z-index: 10;
+		background: #F9F9F9;
+	}
+	.clickBtn{
+		left: 4% !important;
+	}
+	
 }
 @media screen and (min-width:768px) and (max-width:1200px){
 	.header-wrapper{
@@ -127,6 +261,19 @@
 		position: absolute;
 		top: 114px;
 		left: 30%;
+	}
+	.uploadBtn{
+		width: 100%;
+		height: 110px;
+		position: fixed;
+		bottom: 0;
+		left: 50%;
+		margin-left: -50%;
+		z-index: 10;
+		background: #F9F9F9;
+	}
+	.clickBtn{
+		left: 4% !important;
 	}
 }
 @media screen and (min-width:1200px){
@@ -161,5 +308,15 @@
 		position: absolute;
 		top: 114px;
 		left: 30%;
+	}
+	.uploadBtn{
+		width: 1140px;
+		height: 110px;
+		position: fixed;
+		bottom: 0;
+		left: 50%;
+		margin-left: -570px;
+		z-index: 10;
+		background: #F9F9F9;
 	}
 }

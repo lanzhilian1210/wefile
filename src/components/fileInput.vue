@@ -1,6 +1,5 @@
 <template>
-    <div class="inputBox">
-        
+    <div class="inputBox">    
         <el-upload
             class="uploadCont"
             drag
@@ -17,15 +16,19 @@
                 <!-- <img src="../../static/img/pdf.jpg" alt="" class="pdf"> -->
                 <!-- <div class="el-upload__text">将需转换的PDF文件拖放至此<div class="seleTxt">选择文件</div></div> -->
             </div>
-            <el-button size="small" type="primary" v-show="fileList.length">点击上传</el-button>
+            <div class="clickBtn" v-show="fileList.length" ref="clickBtn">点击上传</div>
         </el-upload>
         <ul class="uploadList" style="margin-bottom:145px;">
             <li v-for="(lis,index) in fileList" :key="index" @mouseover="handleOver(index)" @mouseout="handleLeave(index)">
                 <span class="lisName">{{lis.name}}</span>
-                <span v-show="transfor">{{lis.size}}</span>
-                <span class="statusBtn" v-show="transfor">就绪</span>
-                <span class="statusTransfor" v-show="!transfor">正在转换</span>
-                <span class="cancel" v-show="!transfor" @click=cancelTransfor(lis)>取消</span>
+                <span v-show="lis.transforReady">{{lis.size}}</span>
+                <span class="statusBtn" v-show="lis.transforReady">就绪</span>
+                <span class="statusTransfor" v-show="lis.transforOver" style="color:#5CB85C;">转换完成</span>
+                <span class="statusTransfor" v-show="lis.transforAgain">转换失败</span>
+                <span class="statusTransfor" v-show="lis.transforIng">正在转换</span>
+                <span class="cancel" v-show="lis.transforIng" @click=cancelTransfor(lis) >取消</span> 
+                <span class="cancel" v-show="lis.transforAgain" style="background:#0275D8;">重试</span>
+                <span class="cancel" v-show="lis.transforOver" style="background:#5CB85C;" e-else>下载</span>
                 <img src="../../static/img/delete.png" alt="" class="deleteLis" :class="{disBox: index === current}" @click="delteLis(index)">
                 <!-- <div class="progress" ref="progress"></div> -->
                 <el-progress :percentage="lis.num" ></el-progress>
@@ -54,11 +57,27 @@
                 size:0,
                 multiple: true, // 多选
                 fileName: '',
-                num:[],
-                timer: null,
                 current:-1,
                 currentShow:-1,
-                transfor: false, //转换状态
+
+            }
+        },
+        mounted() {
+            if(document.body.clientWidth < 1520) {
+                this.$refs.clickBtn.style.left = 65 + 'px';
+            }
+            window.onresize = () =>{
+                if(document.body.clientWidth > 1200 && document.body.clientWidth<=1300) {
+                    this.$refs.clickBtn.style.left = 78 + 'px';
+                }
+                 if(document.body.clientWidth > 1300 && document.body.clientWidth<1520) {
+                    this.$refs.clickBtn.style.left = 135 + 'px';
+                }
+                if(document.body.clientWidth>1520) {
+                    this.$refs.clickBtn.style.left = 256 + 'px';
+                }
+                
+                // console.log(document.body.clientWidth);
             }
         },
         methods:{
@@ -140,7 +159,11 @@
                             url: file.url,
                             size: this.size,
                             num: 0,
-                            timer: null
+                            timer: null,
+                            transforReady: true, //转换状态 就绪
+                            transforIng: false,  // 上传过程
+                            transforOver: false, //转换完成
+                            transforAgain: false, //重试
                         })
                         fileListArr.push(file.name);
                     } else {                    
@@ -153,7 +176,11 @@
                                 url: file.url,
                                 size: this.size,
                                 num: 0, //进度条
-                                timer: null // 定时器
+                                timer: null, // 定时器
+                                transforReady: true, //转换状态 就绪
+                                transforIng: false,  // 上传过程
+                                transforOver: false, //转换完成
+                                transforAgain: false, //重试
                                 })
                         } else {
                            this.$message.error('文件已上传'); 
@@ -163,12 +190,19 @@
             },
             // 上传
             submitUpload() { 
+                
                 this.fileList.forEach((e,i)=>{
+                    e.transforAgain = false; //重试
+                    e.transforReady = false;
+                    e.transforIng = true; // 上传过程
                     clearInterval(e.timer);
                     e.timer = setInterval(()=>{
                         e.num ++;
                         if(e.num > 99){
                             e.num = 100;
+                            clearInterval(e.timer);
+                            e.transforIng = false; // 上传过程
+                            e.transforOver = true; // 上传完成
                         }
                     },20*(i+1))
                 })
@@ -188,6 +222,8 @@
                 // 取消上传隐藏进度条
                 lis.num = 0;
                 clearInterval(lis.timer);
+                lis.transforIng = false; // 上传过程
+                lis.transforAgain = true; //重试
             },
             // 文件上传过程中
             uploadOnProgress(e,file){
@@ -201,9 +237,8 @@
 </script>
 <style>
 .inputBox{
-    height: 370px;
+    height: 100%;
     margin:160px 55px 0;
-    background: lightgray;
 }
 .uploadCont,.el-upload-dragger,.el-upload{
     width: 100%;
@@ -325,16 +360,6 @@
 .lisName{
     overflow: hidden;
 }
-.uploadBtn{
-    height: 110px;
-    width: 1140px;
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    margin-left: -570px;
-    z-index: 10;
-    background: #F9F9F9;
-}
 .fileTransfor{
     width: 200px;
     height: 52px;
@@ -351,7 +376,7 @@
     float: right;
     margin: 36px;
 }
-.el-button--primary{
+.clickBtn{
    width: 200px;
     height: 52px;
     background: #fff;
@@ -361,7 +386,7 @@
     position: fixed;
     display: inline-block;
     border-radius: 5px;
-    left: 16%;
+    left: 256px;
     bottom: 22px;
     z-index: 11;
     border: 1px solid #DCDFE6;
@@ -387,6 +412,7 @@
     text-align: center;
     top: 34px;
     cursor: pointer;
+    border-radius: 5px;
 }
 .isShow{
     display: none;
