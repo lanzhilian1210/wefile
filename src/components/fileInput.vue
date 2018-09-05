@@ -24,7 +24,7 @@
                 <span v-show="lis.transforReady">{{lis.size}}</span>
                 <span class="statusBtn" v-show="lis.transforReady">就绪</span>
                 <span class="statusTransfor" v-show="lis.transforOver" style="color:#5CB85C;">转换完成</span>
-                <span class="statusTransfor" v-show="lis.transforAgain">转换失败</span>
+                <span class="statusTransfor" v-show="lis.transforAgain" style="color:#D9534F;">转换失败</span>
                 <span class="statusTransfor" v-show="lis.transforIng">正在转换</span>
                 <span class="cancel" v-show="lis.transforIng" @click=cancelTransfor(lis) >取消</span> 
                 <span class="cancel" v-show="lis.transforAgain" style="background:#0275D8;">重试</span>
