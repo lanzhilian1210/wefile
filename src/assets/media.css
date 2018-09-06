@@ -81,29 +81,35 @@
 		left: 4% !important;
 	}
 	.uploadList li{
-		height: 200px !important;
+		height: 138px !important;
+		display: flex;
+		flex-direction:column ;
+		align-items:center;
 	}
 	.uploadList li span{
-		float: left;
+		margin:0 !important;
+		height: 40px;
+		line-height: 40px;
+		position: relative !important;
+		right: 0 !important;
+		top: 0 !important;
+	}
+	/* .uploadList li span{
 		width: 100%;
-		text-align: center;
-		margin:0 auto !important;
-		line-height: 45px;
-		left: 0;
-		top: 0;
-		height: 45px;
-		position: relative;
 	}
 	.cancel{
 		width: 82px !important;
-	left: 164px !important;
-	border-radius: 10px;
-	}
-	.uploadList li img{
+		left: 164px !important;
+		border-radius: 10px;
+	} */
+	/* .uploadList li img{
 		position: relative !important;
 		top: 70px !important;
 		right: -26% !important;
 	}
+	.statusBtn{
+		width: 50px !important;
+	} */
 }
 @media screen and (min-width:550px) and (max-width:684px) {
 	.header-wrapper{

@@ -262,9 +262,10 @@
 .uploadList li{
     width: 100%;
     height: 98px;
-    border: 1px solid #333;
+    border: 1px solid #e0e0e0;
     font: 18px/98px "微软雅黑";
     color: #333;
+    border-radius: 5px;
     position: relative;
     margin-top: -1px;
 }
