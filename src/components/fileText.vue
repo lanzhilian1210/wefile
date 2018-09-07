@@ -65,7 +65,7 @@
 </script>
 <style>
 .fileText{
-		margin:100px 55px 0;
+		margin:-60px 55px 0;
 		display:flex;
         flex-direction: row;
         justify-content: space-between;

@@ -241,8 +241,8 @@
     margin:160px 55px 0;
 }
 .uploadCont,.el-upload-dragger,.el-upload{
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
 }
 .el-upload-dragger{
     border: 1px solid #797979;
@@ -317,7 +317,7 @@
 /* 进度条 */
 .el-progress{
     height: 3px;
-    position: absolute;
+    position: absolute !important;
     left: 0;
     bottom: 0;
     width: 100%;
@@ -325,18 +325,18 @@
     z-index: 9;
 }
 .el-progress-bar{
-    position: absolute;
-    padding-right: 0;
+    position: absolute !important;
+    padding-right: 0 !important;
     left: 0;
 }
 .el-progress__text{
-    display: none;
+    display: none !important;
 }
 .disBox{
     display: block;
 }
 .el-progress-bar__outer{
-    background: transparent;
+    background: transparent !important;
 }
 .pdf{
     width: 64px;
