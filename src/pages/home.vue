@@ -1,9 +1,9 @@
 <template>
 <div class="pageWapper">
-    <!-- <fileHeader></fileHeader> -->
+    <fileHeader></fileHeader>
     <fileInput @getMsg="getMsg"></fileInput>
-     <!-- <fileText v-show="isShow" ></fileText> -->
-    <!--<footerFile></footerFile> -->
+     <fileText v-show="isShow" ></fileText>
+    <footerFile></footerFile>
 </div>
 </template>
 <script>
