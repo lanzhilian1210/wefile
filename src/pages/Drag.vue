@@ -20,7 +20,7 @@
       </ul>
       <div class="example-btn">
         <file-upload
-          class="btn btn-primary"
+          class="upload"
           post-action="http://localhost:3001/string"
           :multiple="true"
           :drop="true"

@@ -1,23 +1,22 @@
 <template>
-    <div class="inputBox">    
-        <el-upload
-            class="uploadCont"
-            drag
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :file-list="fileList"
-            :on-change="handleChange"
-            :on-progress="uploadOnProgress"
-            :auto-upload="false"
-            ref="upload"
-            :before-upload="beforeAvatarUpload"
-            :multiple="multiple"
-            >
-            <div class="minCont">
-                <!-- <img src="../../static/img/pdf.jpg" alt="" class="pdf"> -->
-                <!-- <div class="el-upload__text">将需转换的PDF文件拖放至此<div class="seleTxt">选择文件</div></div> -->
-            </div>
-            <div class="clickBtn" v-show="fileList.length" ref="clickBtn">点击上传</div>
-        </el-upload>
+    <div class="inputBox">
+        <div class="uploadBox"> 
+            <ul  style="width:100%;height:100%;border:1px solid red;">
+                <div class="text-center">
+                    <img src="../../static/img/pdf.jpg" style="margin-top:30px;">
+                    <h4>将需要转换的PDF文件拖放至此<br/></h4><label for="file" ><h4>选择文件</h4></label>
+                </div>
+            </ul>
+            <file-upload
+            class="upload"
+            post-action="http://localhost:3001/string"
+            :multiple="true"
+            :drop="true"
+            :drop-directory="true"
+            v-model="fileList"  
+            ref="upload">
+            </file-upload>                
+        </div>
         <ul class="uploadList" style="margin-bottom:145px;">
             <li v-for="(lis,index) in fileList" :key="index" @mouseover="handleOver(index)" @mouseout="handleLeave(index)">
                 <span class="lisName">{{lis.name}}</span>
@@ -49,7 +48,11 @@
     </div>
 </template>
 <script>
+    import FileUpload from 'vue-upload-component';
     export default{
+        components: {
+            FileUpload,
+        },
         data() {
             return {
                 fileList:[], // 存储pdf类型
@@ -60,24 +63,6 @@
                 current:-1,
                 currentShow:-1,
 
-            }
-        },
-        mounted() {
-            if(document.body.clientWidth < 1520) {
-                this.$refs.clickBtn.style.left = 65 + 'px';
-            }
-            window.onresize = () =>{
-                if(document.body.clientWidth > 1200 && document.body.clientWidth<=1300) {
-                    this.$refs.clickBtn.style.left = 78 + 'px';
-                }
-                 if(document.body.clientWidth > 1300 && document.body.clientWidth<1520) {
-                    this.$refs.clickBtn.style.left = 135 + 'px';
-                }
-                if(document.body.clientWidth>1520) {
-                    this.$refs.clickBtn.style.left = 256 + 'px';
-                }
-                
-                // console.log(document.body.clientWidth);
             }
         },
         methods:{
@@ -240,21 +225,18 @@
     height: 100%;
     margin:160px 55px 0;
 }
-.uploadCont,.el-upload-dragger,.el-upload{
+.uploadBox{
     width: 100% !important;
-    height: 100% !important;
-}
-.el-upload-dragger{
+    height:370px;
     border: 1px solid #797979;
     padding: 20px;
-}
-.minCont{
     box-sizing: content-box;
-    border: 1px dashed #797979;
-    height: 328px;
 }
-.el-upload-list{
-    display: none;
+.text-center h4{
+    height: 40px;
+    font:28px/40px "微软雅黑";
+    color: #000;
+    margin-top: 10px;
 }
 .uploadList{
     margin: 30px 0;   
