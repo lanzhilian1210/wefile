@@ -12,7 +12,7 @@ import axios from 'axios'
 
 /* eslint-disable no-new */
 Vue.use(ElementUI);
-Vue.prototype.axios = axios
+Vue.prototype.axios = axios;
 new Vue({
   el: '#app',
   router,

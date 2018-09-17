@@ -31,11 +31,11 @@
           <i class="fa fa-plus"></i>
           Select files
         </file-upload>
-        <button type="button" class="btn btn-success" @click.prevent="uploadFile">
+        <button type="button" class="btn" @click.prevent="uploadFile">
           <i class="fa fa-arrow-up" aria-hidden="true"></i>
           Start Upload
         </button>
-        <button type="button" class="btn btn-danger" @click.prevent="$refs.upload.active = false">
+        <button type="button" class="btn " @click.prevent="$refs.upload.active = false">
           <i class="fa fa-stop" aria-hidden="true"></i>
           Stop Upload
         </button>

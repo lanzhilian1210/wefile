@@ -3,24 +3,28 @@
         <div class="uploadBox"> 
             <ul  style="width:100%;height:100%;border:1px solid red;">
                 <div class="text-center">
-                    <img src="../../static/img/pdf.jpg" style="margin-top:30px;">
-                    <h4>将需要转换的PDF文件拖放至此<br/></h4><label for="file" ><h4>选择文件</h4></label>
+                    <!-- <img src="../../static/img/pdf.jpg" style="margin-top:30px;"> -->
+                    <!-- <h4>将需要转换的PDF文件拖放至此<br/></h4> -->
+                    <label for="file" ><h4>选择文件</h4></label>
                 </div>
             </ul>
             <file-upload
             class="upload"
-            post-action="http://localhost:3001/string"
+            post-action="http://localhost:3000/users/bar"
             :multiple="true"
             :drop="true"
             :drop-directory="true"
-            v-model="fileList"  
+            v-model="fileList" 
+            @input-file="inputFile" 
+            @input-filter="inputFilter"
             ref="upload">
+            选择文件
             </file-upload>                
         </div>
         <ul class="uploadList" style="margin-bottom:145px;">
-            <li v-for="(lis,index) in fileList" :key="index" @mouseover="handleOver(index)" @mouseout="handleLeave(index)">
+            <li v-for="(lis,index) in fileList" :key="index">
                 <span class="lisName">{{lis.name}}</span>
-                <span v-show="lis.transforReady">{{lis.size}}</span>
+                <span v-show="lis.transforReady">{{lis.size | formatSize(lis.size)}}</span>
                 <span class="statusBtn" v-show="lis.transforReady">就绪</span>
                 <span class="statusTransfor" v-show="lis.transforOver" style="color:#5CB85C;">转换完成</span>
                 <span class="statusTransfor" v-show="lis.transforAgain" style="color:#D9534F;">转换失败</span>
@@ -28,23 +32,25 @@
                 <span class="cancel" v-show="lis.transforIng" @click=cancelTransfor(lis) >取消</span> 
                 <span class="cancel" v-show="lis.transforAgain" style="background:#0275D8;">重试</span>
                 <span class="cancel" v-show="lis.transforOver" style="background:#5CB85C;" e-else>下载</span>
-                <img src="../../static/img/delete.png" alt="" class="deleteLis" :class="{disBox: index === current}" @click="delteLis(index)">
+                <img src="../../static/img/delete.png" alt="" class="deleteLis" @click="delteLis(index)">
                 <!-- <div class="progress" ref="progress"></div> -->
-                <el-progress :percentage="lis.num" ></el-progress>
+                <el-progress :percentage="progress" ></el-progress>
             </li>
         </ul>
 
         <ul class="uploadList" v-show="otherFileList.length" style="margin-bottom:145px;">
             <div class="listTitle">当前并不支持以下格式转换</div>
-            <li v-for="(lis,index) in otherFileList" :key="index" @mouseover="handleOver(index)" @mouseout="handleLeave(index)">
+            <li v-for="(lis,index) in otherFileList" :key="index">
                 <span class="lisName">{{lis.name}}</span>
                 <span class="statusBtn" style="background:#D9534F;">错误</span>
-                <img src="../../static/img/delete.png" alt="" class="deleteLis" :class="{disBox: index === current}" @click="delteOtherLis(index)">
+                <img src="../../static/img/delete.png" alt="" class="deleteLis" @click="delteOtherLis(index)">
             </li>
         </ul>
-        <div class="uploadBtn" v-show="fileList.length" >
-            <div @click="submitUpload" class="fileTransfor" v-show="fileList.length">开始转换</div>
+        
+        <div class="uploadBtn"  >
+            <div @click="submitUpload" class="fileTransfor">开始转换</div>
         </div>
+
     </div>
 </template>
 <script>
@@ -62,17 +68,10 @@
                 fileName: '',
                 current:-1,
                 currentShow:-1,
-
+                progress: 0,
             }
         },
         methods:{
-            // 鼠标的移入移出
-            handleOver(index) {
-                this.current = index;
-            },
-            handleLeave(index) {
-                this.current = -1;
-            },
             // 删除当前li
             delteLis(index) {
                 this.fileList.splice(index,1);
@@ -86,136 +85,91 @@
                     this.$emit('getMsg',true); // 子组件给父组件传递状态
                 }
             },
-            handleChange(file,fileList){
-                this.$emit('getMsg',false); // 子组件给父组件传递状态
-                let index = file.raw.type.indexOf('/');
-                let fontIndex = file.name.indexOf('.');
-                // console.log(file,fontIndex);
-                // 文件名字过长处理
-                if(fontIndex > 5) {
-                    // this.name = file.name.substring(0,5) +'...'+'.pdf';
-                    this.name = file.name;
-                } else {
-                    this.name = file.name;
+            // 文件过滤
+            inputFilter(newFile, oldFile, prevent) {
+                if (newFile && !oldFile) {
+                // 添加文件
+                // 过滤非图片文件
+                // 不会添加到 files 去
+                    if (/\.(jpeg|jpe|jpg|png|webp|html)$/i.test(newFile.name)) {
+                        this.otherFileList.push(newFile);
+                        return prevent();
+                    }
+                    newFile.transforReady = true;
+                    newFile.transforIng = false; // 上传过程
+                    newFile.transforOver = false; //转换完成
+                    newFile.transforAgain = false; //重试
                 }
-                // 文件大小 大于1024kb 用单位MB
-                if(file.size/1024 >= 1024) {
-                    this.size = Math.floor((file.size/1024)/1024) + 'MB'
-                };
-                if(file.size/1024 < 1024) {
-                    this.size = Math.floor(file.size/1024) + 'KB'
-                };               
-                // 判断文件类型
-                let fileType = file.raw.type.substring(index+1);
-                const ispdf = fileType == 'pdf';
-                // 非pdf文件类型
-                let otherFileListArr = [];
-                if (!ispdf) {
-                // 第一次上传
-                    if(this.otherFileList.length == 0) {
-                        this.otherFileList.push({
-                            name: this.name,
-                            url: file.url,
-                            size: this.size
-                        })
-                        otherFileListArr.push(file.name);
-                    } else {                    
-                        this.otherFileList.forEach((e,i)=>{
-                        otherFileListArr.push(e.name);
-                        });
-                        if(otherFileListArr.indexOf(file.name) === -1) {
-                             this.otherFileList.push({
-                                name: this.name,
-                                url: file.url,
-                                size: this.size
-                                })
-                        } else {
-                           this.$message.error('文件已上传'); 
+            },
+            // input-file 事件
+            inputFile(newFile, oldFile) {
+                if (newFile && oldFile) {
+                    // update
+                    if (newFile.active && !oldFile.active) {
+                    // beforeSend
+                    // min size
+                        if (newFile.size >= 0 && this.minSize > 0 && newFile.size < this.minSize) {
+                            this.$refs.upload.update(newFile, { error: 'size' })
                         }
-                    } 
-                }
-                // pdf文件类型
-                let fileListArr = [];
-                if(ispdf) {
-                    // 第一次上传
-                    if(this.fileList.length == 0) {
-                        this.fileList.push({
-                            name: this.name,
-                            url: file.url,
-                            size: this.size,
-                            num: 0,
-                            timer: null,
-                            transforReady: true, //转换状态 就绪
-                            transforIng: false,  // 上传过程
-                            transforOver: false, //转换完成
-                            transforAgain: false, //重试
-                        })
-                        fileListArr.push(file.name);
-                    } else {                    
+                    }
+                    if (newFile.progress !== oldFile.progress) {
+                    // progress
+                    // console.log('progress', newFile.progress, newFile);
+                        this.progress = Number(newFile.progress);
                         this.fileList.forEach((e,i)=>{
-                        fileListArr.push(e.name);
-                        });
-                        if(fileListArr.indexOf(file.name) === -1) {
-                             this.fileList.push({
-                                name: this.name,
-                                url: file.url,
-                                size: this.size,
-                                num: 0, //进度条
-                                timer: null, // 定时器
-                                transforReady: true, //转换状态 就绪
-                                transforIng: false,  // 上传过程
-                                transforOver: false, //转换完成
-                                transforAgain: false, //重试
-                                })
-                        } else {
-                           this.$message.error('文件已上传'); 
-                        }
-                    } 
+                            e.transforAgain = false; //重试
+                            e.transforReady = false;
+                            e.transforIng = true; // 上传过程
+                        })
+                        console.log(this.fileList);
+                    }
+                    if (newFile.error && !oldFile.error) {
+                        console.log('error');
+                        console.log(this.fileList);
+                    }
+                    if (newFile.success && !oldFile.success) {
+                        console.log('success');
+                        this.fileList.forEach((e,i)=>{
+                            e.transforAgain = false; //重试
+                            e.transforReady = false;
+                            e.transforIng = false; // 上传过程
+                             newFile.transforOver = true; //转换完成
+                        })
+                        console.log(this.fileList);
+                    }
+                }
+                if (!newFile && oldFile) {
+                    // remove
+                    if (oldFile.success && oldFile.response.id) {
+                    // $.ajax({
+                    //   type: 'DELETE',
+                    //   url: '/upload/delete?id=' + oldFile.response.id,
+                    // })
+                    }
                 }
             },
             // 上传
             submitUpload() { 
-                
-                this.fileList.forEach((e,i)=>{
-                    e.transforAgain = false; //重试
-                    e.transforReady = false;
-                    e.transforIng = true; // 上传过程
-                    clearInterval(e.timer);
-                    e.timer = setInterval(()=>{
-                        e.num ++;
-                        if(e.num > 99){
-                            e.num = 100;
-                            clearInterval(e.timer);
-                            e.transforIng = false; // 上传过程
-                            e.transforOver = true; // 上传完成
-                        }
-                    },20*(i+1))
-                })
-                // 请求接口
-                // this.axios.post('https://jsonplaceholder.typicode.com/posts/',this.fileList).then((res)=>{
-                //     console.log(res);
-                // }).catch(
-                //     (err)=>{
-                //         console.log(err);
-                //     }
-                // );
-                // 上传进度条
-                // console.log(fileList)
+                this.$refs.upload.active = true;
             },
             // 取消上传
             cancelTransfor(lis) {
-                // 取消上传隐藏进度条
-                lis.num = 0;
-                clearInterval(lis.timer);
                 lis.transforIng = false; // 上传过程
                 lis.transforAgain = true; //重试
             },
-            // 文件上传过程中
-            uploadOnProgress(e,file){
-                console.log(e);
-            },
-            beforeAvatarUpload(file) {
-                console.log(file);
+        },
+        filters:{
+            formatSize(size) {
+            if (size > 1024 * 1024 * 1024 * 1024) {
+                return (size / 1024 / 1024 / 1024 / 1024).toFixed(2) + ' TB'
+            } else if (size > 1024 * 1024 * 1024) {
+                return (size / 1024 / 1024 / 1024).toFixed(2) + ' GB'
+            } else if (size > 1024 * 1024) {
+                return (size / 1024 / 1024).toFixed(2) + ' MB'
+            } else if (size > 1024) {
+                return (size / 1024).toFixed(2) + ' KB'
+            }
+            return size.toString() + ' B'
             }
         }
     }
@@ -254,13 +208,9 @@
 .uploadList li:nth-of-type(1){
     margin-top: 0;
 }
-.uploadList li span,.uploadList li img{
-    float: left;
-}
 .deleteLis{
     height: 25px;
     width: 25px;
-    display: none;
 }
 .uploadList li span:nth-of-type(1){
     margin-left: 5%;
@@ -358,6 +308,21 @@
     border-radius: 5px;
     float: right;
     margin: 36px;
+}
+.file-uploads{
+    position: fixed !important;
+    left: 100px;
+    bottom: 22px;
+    z-index: 11;
+    width: 200px;
+    height: 52px;
+    background: #0275D8;
+    font:20px/52px "微软雅黑";
+    color: #fff;
+    text-align: center;
+    display: inline-block;
+    border-radius: 5px;
+    cursor: pointer;
 }
 .clickBtn{
    width: 200px;
