@@ -135,7 +135,6 @@
                             e.transforIng = false; // 上传过程
                              newFile.transforOver = true; //转换完成
                         })
-                        console.log(this.fileList);
                     }
                 }
                 if (!newFile && oldFile) {

@@ -35,7 +35,7 @@
                     userName:this.name,
                     password:this.password
                 };
-                this.axios.post('http://localhost:3001/users/reg',data).then(res=>{
+                this.axios.post('http://localhost:3000/users/reg',data).then(res=>{
                     console.log(res);
                 }).catch(err=>{
                     console.log(err);
@@ -43,9 +43,9 @@
             },
             status() {
                 let data = '123';
-                let token = 'Bearer '+ localStorage.getItem("token");
+                // let token = 'Bearer '+ localStorage.getItem("token");
 
-                this.axios.post('http://localhost:3000/users/status',data,{headers:{'Authorization':token}}).then(res=>{
+                this.axios.post('http://localhost:3000/users/status',data).then(res=>{
                     console.log(res);
                 }).catch(err=>{
                     console.log(err);
