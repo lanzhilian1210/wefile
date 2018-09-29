@@ -2,69 +2,63 @@
     <div class="priceContent">
         <fileHeader></fileHeader>
         <div class="priceText">
-            <div class="priceCon">
-                <img src="../../static/img/money.jpg" alt="" class="iconImg">
-                <div class="priceTitle">免费使用</div>
+            <div class="priceBox">
+                <img src="../../static/img/money.jpg" alt="">
+                <span>免费版</span>
                 <div class="priceList">
-                    <p><span>*</span>每小时最多转换两个文件</p>
-                    <p><span>*</span>不支持多文件同时上传</p>
-                    <p><span>*</span>低优先级转换通道</p>
-                    <p><span>*</span>最大100M文件</p>
+                    <p>每小时最多转换两个文件</p>
+                    <p>不支持多文件同时上传</p>
+                    <p>低优先级转换通道</p>
+                    <p>最大100M文件</p>
                 </div>
             </div>
-            <div class="priceCon heightCon1">
-                <img src="../../static/img/count.jpg" alt="" class="iconImg" style="top:200px">
-                <div class="priceTitle" style="top:210px">按次付费</div>
-                <div class="priceList listHeight">
-                    <p><span>*</span>不限制每小时转换次数</p>
-                    <p><span>*</span>转换次数永不清空</p>
-                    <p><span>*</span>支持多文件同时上传转换</p>
-                    <p><span>*</span>高速转换通道</p>
-                    <p><span>*</span>最大上传5G文件</p>
-                    <div class="allTitle">
+            <div class="priceBox priceBox2">
+                <img src="../../static/img/count.jpg" alt="">
+                <span>专业版</span>
+                <div class="priceList">
+                    <p>不限制每小时转换次数</p>
+                    <p>转换次数永不清空</p>
+                    <p>支持多文件同时上传转换</p>
+                    <p>高速转换通道</p>
+                    <p>最大上传5G文件</p>
+                </div>
+            </div>
+            <div class="priceTab">
+                <span>按次使用</span>
+                <span>包月使用</span>
+            </div>
+            <div class="priceBox priceBox3">
+                <img src="../../static/img/count.jpg" alt="">
+                <div class="priceList">
+                    <p>大部分用户的选择</p>
+                    <p>根据转换频率，按需购买</p>
+                    <p>剩余次数,永不清空</p>
+                    <p>可再次续费</p>
+                    <div class="priceDis">
                         <span>合计转换</span>
                         <span>费用</span>
                     </div>
-                    <div class="countDis">
-                        <span style="color:#990000">100次</span>
-                        <span>￥1.00</span>
+                    <div class="priceDis priceDis2">
+                        <span>100次</span>
+                        <span>￥10.00</span>
                     </div>
-                    <div class="countNum">
-                        <span>次数:</span>
-                        <el-slider v-model="value"></el-slider>
+                    <div class="priceCount">
+                        <span class="priceCountName">次数</span>
+                        <div class="priceNum">
+                            <span>100次</span>
+                            <span>100次</span>
+                            <span>100次</span>
+                            <span>100次</span>
+                            <span>100次</span>
+                        </div>
                     </div>
-                    <div class="buyBtn">按次购买</div>
-                </div>
-            </div>
-            <div class="priceCon heightCon2">
-                <img src="../../static/img/yue.jpg" alt="" class="iconImg" style="top:200px">
-                <div class="priceTitle" style="top:210px">按月付费</div>
-                <div class="priceList listHeight" style="height:500px;">
-                    <p><span>*</span>不限制每小时转换次数</p>
-                    <p><span>*</span>3倍于按月购买的转换次数</p>
-                    <p><span>*</span>每30天清空转换次数</p>
-                    <p><span>*</span>支持多文件同时上传转换</p>
-                    <p><span>*</span>高速转换通道</p>
-                    <p><span>*</span>最大上传5G文件</p>
-                    <div class="allTitle">
-                        <span>合计转换</span>
-                        <span>费用</span>
-                    </div>
-                    <div class="countDis">
-                        <span style="color:#990000">100次</span>
-                        <span>￥1.00</span>
-                    </div>
-                    <div class="countNum">
-                        <span>次数:</span>
-                        <el-slider v-model="value"></el-slider>
-                    </div>
-                    <div class="buyBtn">包月购买</div>
+                    <div class="buyCount"><span>立即购买</span></div>
                 </div>
             </div>
         </div>
-        <div class="footerCon">
+        <!-- <div class="footerCon">
             <footerFile></footerFile>
-        </div>    
+        </div>     -->
     </div>
 </template>
 <script>
@@ -86,46 +80,24 @@
     padding-top: 30px;
     margin: 0 auto;
     max-width: 1200px;
+    padding-bottom: 30px;
 }
-.footerCon{
-     margin: 0 auto 30px;
-    max-width: 1200px;
-}
-.priceCon{
+.priceBox{
     width: 100%;
-    height: 290px;
-    position: relative;  
+    height: 260px;
+    border-bottom: 1px solid #E0E0E0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
-.heightCon1{
-    height: 600px;
+.priceBox img{
+    height: 43px;
+    max-width: 43px;
 }
-.heightCon2{
-    height: 620px;
-}
-.iconImg{
-    height: 64px;
-    width: 64px;
-    position: absolute;
-    top: 100px;
-    left: 10%;
-}
-.priceTitle{
-    height: 40px;
-    font: 28px/40px "微软雅黑";
+.priceBox>span{
+    font-size: 28px;
     color: #333;
     font-weight: 600;
-}
-.priceList{
-    position: absolute;
-    right: 0;
-    width: 400px;
-    top: 70px;
-    height: 170px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid #e0e0e0;
-}
-.listHeight{
-    height: 460px;
 }
 .priceList p{
     height: 40px;
@@ -136,44 +108,79 @@
     display: inline-block;
     margin-right: 20px;
 }
-.allTitle,.countDis,.countNum{
-    width: 100%;
+.priceBox2{
+    border: none;
+}
+.priceTab{
+    height: 40px;
     display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
-    height: 25px;
+    justify-content: center;
 }
-.allTitle span{
-    height: 25px;
-    font: 18px/25px "微软雅黑";
-    color: #333;
-    font-weight: 600;
+.priceTab span{
+    width: 120px;
+    height: 40px;
+    background: #E4E4E4;
+    font: 18px/40px "微软雅黑";
+    color: #222;
+    text-align: center;
 }
-.countDis{
+.priceBox3{
+    border: none;
+    height: auto;
     margin-top: 20px;
 }
-.countDis span{
-    height: 25px;
-    font: 18px/25px "微软雅黑";
-    color: #333;
-    font-weight: 900;
+.priceBox3 .priceList{
+    max-width: 590px;
+    min-width: 590px;
+    margin-left: 48px;
 }
-.countNum span{
-       height: 25px;
-    font: 18px/25px "微软雅黑";
-    color: #333;
+.priceDis{
+    height: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
 }
-.el-slider{
-    width: 300px;
+.priceDis2 span{
+    color: #F7BA2A;
 }
-.buyBtn{
-    width: 140px;
-    height: 52px;
-    background: #0275D8;
-    color: #fff;
-    font: 20px/52px "微软雅黑";
+.priceCount{
+    height: 30px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-start;
+}
+.priceCountName{
+    height: 30px;
+    font: 16px/30px "微软雅黑";
+    font-weight: 600;
+}
+.priceNum{
+    margin-left: 20px;
+    height: 30px;
+    font: 14px/30px "微软雅黑";
+}
+.priceNum span{
+    width: 90px;
     text-align: center;
-    margin: 40px auto 0;
-    border-radius: 10px;
+    display: inline-block;
+    margin-left: 4px;
+    background: #E4E4E4;
+}
+.buyCount{
+    width: 100%;
+    margin-top: 30px;
+    height: 40px;
+    text-align: center;
+}
+.buyCount span{
+    width: 160px;
+    background: #3A8EE6;
+    height: 100%;
+    font: 16px/40px "微软雅黑";
+    color: #fff;
+    text-align: center;
+    display: inline-block;
 }
 </style>

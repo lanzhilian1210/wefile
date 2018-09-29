@@ -44,16 +44,6 @@
 	.iconImg{
 		display: none;
 	}
-	.priceList{
-		position: absolute;
-		right: 0;
-		width:100% !important;
-		top: 70px;
-		height: 210px;
-		padding-bottom: 40px;
-		text-align: center;
-		border-bottom: 1px solid #e0e0e0;
-	}
 	.allTitle,.countDis{
 		justify-content: space-around !important;
 	}
@@ -156,16 +146,6 @@
 	}
 	.iconImg{
 		display: none;
-	}
-	.priceList{
-		position: absolute;
-		right: 0;
-		width:100% !important;
-		top: 70px;
-		height: 210px;
-		padding-bottom: 40px;
-		text-align: center;
-		border-bottom: 1px solid #e0e0e0;
 	}
 	.allTitle,.countDis{
 		justify-content: space-around !important;
