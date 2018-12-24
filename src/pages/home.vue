@@ -1,14 +1,16 @@
 <template>
 <div class="pageWapper">
     <!-- <fileHeader></fileHeader> -->
-    <fileInput @getMsg="getMsg"></fileInput>
-     <!-- <fileText v-show="isShow" ></fileText>
-    <footerFile></footerFile> -->
+    <fileInput></fileInput>
+    <!-- 描述 -->
+     <!-- <fileText v-show="isShow" ></fileText>  -->
+    <!-- <footerFile></footerFile>  -->
 </div>
 </template>
 <script>
     import fileHeader from '../components/fileHeader';
     import fileInput from '../components/fileInput';
+    // import file from '../components/file';
     import fileText from '../components/fileText';
     import footerFile from '../components/footerFile';
     export default{

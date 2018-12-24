@@ -13,6 +13,8 @@ import axios from 'axios'
 /* eslint-disable no-new */
 Vue.use(ElementUI);
 //  请求拦截器
+// 拦截加请求头
+axios.defaults.baseURL = 'http://localhost:3000'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.interceptors.request.use(function (config) { // 每次请求时会从localStorage中获取token
   let token = localStorage.getItem('token');

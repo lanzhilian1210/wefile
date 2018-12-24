@@ -1,11 +1,6 @@
 <template>
-    <div>
-        姓名：<input type="text" v-model="name"> <br />
-        密码：<input type="text" v-model="password"><br />
-        手机号：<input type="text" v-model="phone"><br />
-        <button @click="reg">注册</button>
-        <button @click="login">登录</button>
-        <button @click="status">状态</button>
+    <div class="loginBox">
+       <div class="chooseLogin"></div>
     </div>
 </template>
 <script>
@@ -17,48 +12,17 @@
                 phone: '',
             }
         },
-        methods:{
-            login() {
-                let data = {
-                    userName:this.name,
-                    password:this.password
-                };
-                this.axios.post('http://localhost:3000/users/login',data).then(res=>{
-                    console.log(res);
-                    localStorage.setItem('token',res.data.token)
-                }).catch(err=>{
-                    console.log(err);
-                })
-            },
-            reg() {
-                let data = {
-                    userName:this.name,
-                    password:this.password
-                };
-                this.axios.post('http://localhost:3000/users/reg',data).then(res=>{
-                    console.log(res);
-                }).catch(err=>{
-                    console.log(err);
-                })
-            },
-            status() {
-                let data = '123';
-                // let token = 'Bearer '+ localStorage.getItem("token");
-
-                this.axios.post('http://localhost:3000/users/status',data).then(res=>{
-                    console.log(res);
-                }).catch(err=>{
-                    console.log(err);
-                })
-            }
-        }
     }
 </script>
 <style>
-div{
-    padding: 100px;
+.loginBox{
+    width: 400px;
+    height: 500px;
+    margin: 50px auto 0;
+    border: 1px solid #222;
 }
-div input{
-    margin: 20px;
+.chooseLogin{
+    height: 80px;
+    
 }
 </style>

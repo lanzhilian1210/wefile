@@ -1,27 +1,21 @@
 <template>
     <div class="inputBox">
         <div class="uploadBox"> 
-            <ul  style="width:100%;height:100%;border:1px solid red;">
-                <div class="text-center">
-                    <!-- <img src="../../static/img/pdf.jpg" style="margin-top:30px;"> -->
-                    <!-- <h4>将需要转换的PDF文件拖放至此<br/></h4> -->
-                    <label for="file" ><h4>选择文件</h4></label>
-                </div>
-            </ul>
             <file-upload
-            class="upload"
-            post-action="http://localhost:3000/users/bar"
-            :multiple="true"
-            :drop="true"
-            :drop-directory="true"
-            v-model="fileList" 
-            @input-file="inputFile" 
-            @input-filter="inputFilter"
-            ref="upload">
-            选择文件
+                class="upload"
+                post-action="http://localhost:3000/users/bar"
+                :multiple="true"
+                :drop="true"
+                :drop-directory="true"
+                v-model="fileList" 
+                @input-file="inputFile" 
+                @input-filter="inputFilter"
+                ref="upload" style="width:100%;height:100%;">
+                <div class="txtDis">将PDF与Office文件互相转换</div>
+                <div class="txtDis2">选择文件</div>
             </file-upload>                
         </div>
-        <ul class="uploadList" style="margin-bottom:145px;">
+        <ul class="uploadList" >
             <li v-for="(lis,index) in fileList" :key="index">
                 <span class="lisName">{{lis.name}}</span>
                 <span v-show="lis.transforReady">{{lis.size | formatSize(lis.size)}}</span>
@@ -36,8 +30,32 @@
                 <!-- <div class="progress" ref="progress"></div> -->
                 <el-progress :percentage="progress" ></el-progress>
             </li>
-        </ul>
+            <div class="addFdf">
+                <file-upload
+                    class="btn btn-primary"
+                    post-action="http://localhost:3000/users/bar"
+                    :multiple="true"
+                    :drop="true"
+                    :drop-directory="true"
+                    v-model="fileList"
+                    @input-filter="inputFilter"
+                    @input-file="inputFile"
+                    ref="upload">
+                    选择文件
+                </file-upload>
 
+            </div>
+        </ul>
+        <div class="chooseFileBox">
+            <div class="fileTile">选择需要的文件</div>
+            <div class="fileName">
+                <img src="../../static/img/2.jpg" alt="">
+                <img src="../../static/img/3.jpg" alt="">
+                <img src="../../static/img/4.jpg" alt="">
+                <img src="../../static/img/5.jpg" alt="">
+            </div>
+            <div class="xFileBtn">开始转换</div>
+        </div>
         <ul class="uploadList" v-show="otherFileList.length" style="margin-bottom:145px;">
             <div class="listTitle">当前并不支持以下格式转换</div>
             <li v-for="(lis,index) in otherFileList" :key="index">
@@ -46,11 +64,6 @@
                 <img src="../../static/img/delete.png" alt="" class="deleteLis" @click="delteOtherLis(index)">
             </li>
         </ul>
-        
-        <div class="uploadBtn"  >
-            <div @click="submitUpload" class="fileTransfor">开始转换</div>
-        </div>
-
     </div>
 </template>
 <script>
@@ -102,8 +115,10 @@
                 }
             },
             // input-file 事件
+            // 上传文件
             inputFile(newFile, oldFile) {
                 if (newFile && oldFile) {
+                    
                     // update
                     if (newFile.active && !oldFile.active) {
                     // beforeSend
@@ -175,15 +190,14 @@
 </script>
 <style>
 .inputBox{
-    height: 100%;
-    margin:160px 55px 0;
+    height: 300px;
+    margin:160px 40px 0;
+    border: 1px solid red;
 }
 .uploadBox{
     width: 100% !important;
-    height:370px;
-    border: 1px solid #797979;
-    padding: 20px;
-    box-sizing: content-box;
+    height:300px;
+    /* background: #007AEF; */
 }
 .text-center h4{
     height: 40px;
@@ -308,7 +322,7 @@
     float: right;
     margin: 36px;
 }
-.file-uploads{
+/* .file-uploads{
     position: fixed !important;
     left: 100px;
     bottom: 22px;
@@ -322,7 +336,7 @@
     display: inline-block;
     border-radius: 5px;
     cursor: pointer;
-}
+} */
 .clickBtn{
    width: 200px;
     height: 52px;
@@ -363,5 +377,58 @@
 }
 .isShow{
     display: none;
+}
+.txtDis{
+    font-size: 24px;
+    color: #fff;
+    text-align: center;
+    margin: 120px auto 0;
+}
+.txtDis2{
+    font-size: 24px;
+    color: #fff;
+    text-align: center;
+    margin: 20px auto 0;
+    text-decoration: #000;
+}
+.addFdf{
+    width: 100%;
+    height: 98px;
+    border: 1px solid #e0e0e0;
+    font: 18px/98px "微软雅黑";
+    color: #333;
+    border-radius: 5px;
+    position: relative; 
+}
+.chooseFileBox{
+    width: 100%;
+    margin: 20px auto 0;
+}
+.fileTile{
+    height: 24px;
+    font-size: 24px;
+    color: #000;
+    text-align: center;
+}
+.fileName{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto;
+}
+.fileName img{
+    height: 100%;
+    margin-right: 20px;
+}
+.xFileBtn{
+    height: 50px;
+    width: 200px;
+    font: 20px/50px "微软雅黑";
+    color: #fff;
+    text-align: center;
+    margin: 0 auto;
+    background: #007AEF;
+    margin-bottom: 20px;
 }
 </style>
