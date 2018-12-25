@@ -7,7 +7,12 @@
         <div class="priceBox">
             <div class="boxTop">
                 <div>套餐次数</div>
-                <div class="priceMenu"></div>
+                <div class="priceMenu">
+                    <div class="menuConf">
+                        <div class="menuTop">1次</div>
+                        <div class="menuLine"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -46,5 +51,31 @@
         color: #222;
         display: inline-block;
         float: left;
+    }
+    .priceMenu{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        float: left;
+        margin-left: 20px;
+    }
+    .menuConf{
+        height:78px;
+        width: 138px;
+        border: 1px solid #999;
+        margin-right: 10px;
+    }
+    .menuTop{
+        height: 36px;
+        width: 100%;
+        text-align: center;
+        font: 24px/36px "微软雅黑";
+        color: #000;
+        font-weight: bold;
+    }
+    .menuLine{
+        height: 1px;
+        width: 100%;
+        border: 1px dashed blue;
     }
 </style>
