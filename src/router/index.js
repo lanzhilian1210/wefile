@@ -4,6 +4,8 @@ const Home = () => import('@/pages/home')
 const login = () => import('@/pages/login')
 const price  = () => import('@/pages/price')
 const priceChoice = () => import('@/pages/price2')
+const about = () => import('@/pages/about') //about组件
+const user = () => import('@/pages/user') // 个人中心
 Vue.use(Router)
 
 export default new Router({
@@ -27,6 +29,16 @@ export default new Router({
       path:'/priceChoice',
       name:'priceChoice',
       component: priceChoice
+    },
+    {
+      path:'/about',
+      name:'about',
+      component: about
+    },
+    {
+      path:'/user',
+      name:'user',
+      component: user
     }
   ]
 })
