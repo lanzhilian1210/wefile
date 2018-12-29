@@ -2,8 +2,8 @@
     <div class="userBox">
         <div class="userLeft">
             <div class="leftTop">
-                <div class="leftRadius">FREE</div>
-                <div class="restore">剩余10次</div>
+                <!-- <div class="leftRadius">FREE</div>
+                <div class="restore">剩余10次</div> -->
             </div>
             <div class="userItems">
                 <div>主页</div>
@@ -11,9 +11,25 @@
                 <div>订单</div>
             </div>
         </div>
-        <div class="userRight"></div>
+        <div class="userRight">
+            <!-- <user-free-main></user-free-main> -->
+            <account></account>
+            <!-- <financialOrder></financialOrder> -->
+            <!-- <userVipMain></userVipMain> -->
+        </div>
     </div>
 </template>
+<script>
+import userFreeMain from '../components/userFreeMain' // 免费账户主页
+import account from '../components/account' //账户
+import financialOrder from '../components/financialOrder' // 财务订单
+import userVipMain from '../components/userVipMain' //vip主页
+export default {
+    components:{
+        userFreeMain,account,financialOrder,userVipMain
+    }
+}
+</script>
 <style lang="">
 .userBox{
     overflow: hidden;
@@ -64,4 +80,5 @@
         margin-bottom: 30px;
         text-align: center;
     }
+ 
 </style>
