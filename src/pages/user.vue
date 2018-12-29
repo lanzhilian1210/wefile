@@ -2,20 +2,20 @@
     <div class="userBox">
         <div class="userLeft">
             <div class="leftTop">
-                <!-- <div class="leftRadius">FREE</div>
-                <div class="restore">剩余10次</div> -->
+                <div class="leftRadius">FREE</div>
+                <div class="restore">剩余10次</div>
             </div>
             <div class="userItems">
-                <div>主页</div>
-                <div>账户</div>
-                <div>订单</div>
+                <div @click="handleTab(0)" :class="{'tabActive': isDisplayComponent === 0}">主页</div>
+                <div @click="handleTab(1)" :class="{'tabActive': isDisplayComponent === 1}">账户</div>
+                <div @click="handleTab(2)" :class="{'tabActive': isDisplayComponent === 2}">订单</div>
             </div>
         </div>
         <div class="userRight">
-            <!-- <user-free-main></user-free-main> -->
-            <account></account>
-            <!-- <financialOrder></financialOrder> -->
+            <user-free-main v-show="isDisplayComponent === 0"></user-free-main>
             <!-- <userVipMain></userVipMain> -->
+            <account v-show="isDisplayComponent === 1"></account>
+            <financialOrder v-show="isDisplayComponent === 2"></financialOrder>
         </div>
     </div>
 </template>
@@ -27,6 +27,16 @@ import userVipMain from '../components/userVipMain' //vip主页
 export default {
     components:{
         userFreeMain,account,financialOrder,userVipMain
+    },
+    data() {
+        return {
+            isDisplayComponent:0,
+        }
+    },
+    methods:{
+        handleTab(index){
+            this.isDisplayComponent = index;
+        }
     }
 }
 </script>
@@ -80,5 +90,7 @@ export default {
         margin-bottom: 30px;
         text-align: center;
     }
- 
+    .tabActive{
+        font-weight: bold !important;
+    }
 </style>
