@@ -3,13 +3,29 @@
         <div class="logo"></div>
         <div class="logoText">文档转换真简单</div>
         <div class="banner">
-            <div class="ban1">定价</div>
+            <div class="ban1" @click="handlePrice">定价</div>
             <div class="shu"></div>
-            <div class="ban2">登录</div>
-            <div class="register">注册</div>
+            <div class="ban2" @click="handleLogin">登录</div>
         </div>
     </div>
 </template>
+<script>
+export default {
+    data() {
+        return {
+
+        }
+    },
+    methods:{
+        handleLogin() {
+            this.$router.push({ path:'/login'})
+        },
+        handlePrice() {
+            this.$router.push({ path:'/price'})
+        }
+    }
+}
+</script>
 <style>
 
 .logo{
@@ -28,7 +44,7 @@
     top: 70px;
 }
 .banner{
-    width:284px;
+    width:168px;
     height:52px;
     float:right;
     display:flex;
@@ -39,6 +55,7 @@
     height:100%;
     font:20px/52px "微软雅黑";
     color:#333;
+    cursor: pointer;
 }
 .shu{
     height:48px;
@@ -51,15 +68,6 @@
     font:20px/52px "微软雅黑";
     color:#333;
     margin-left:36px;
-}
-.register{
-    height:100%;
-    font:20px/52px "微软雅黑";
-    color:#fff;
-    margin-left:36px;
-    background:#215FFF;
-    width:84px;
-    text-align:center;
-    border-radius:10px;
+    cursor: pointer;
 }
 </style>

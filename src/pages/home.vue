@@ -1,15 +1,15 @@
 <template>
 <div class="pageWapper">
-    <!-- <fileHeader></fileHeader> -->
+    <fileHeader></fileHeader>
     <fileInput></fileInput>
     <!-- 描述 -->
-     <!-- <fileText v-show="isShow" ></fileText>  -->
-    <!-- <footerFile></footerFile>  -->
+     <fileText v-show="isShow"></fileText> 
+    <footerFile></footerFile> 
 </div>
 </template>
 <script>
     import fileHeader from '../components/fileHeader';
-    import fileInput from '../components/fileInput';
+    import fileInput from '../components/fileInput1';
     // import file from '../components/file';
     import fileText from '../components/fileText';
     import footerFile from '../components/footerFile';
@@ -24,6 +24,7 @@
         },
         methods:{
             getMsg(status){
+                console.log(status);
                 this.isShow = status;
             }
         }

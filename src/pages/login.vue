@@ -1,34 +1,24 @@
 <template>
     <div class="loginBox">
        <div class="chooseLogin">
-           <!-- <div class="wxLogin">微信扫码登录</div>
+           <div class="wxLogin" @click="wxBox(0)" :class="{loginActive: boxIndex == 0}">微信扫码登录</div>
            <span class="xian">|</span>
-           <div class="otherLogin">其他方式登录</div> -->
+           <div class="otherLogin" @click="otherBox(1)" :class="{loginActive: boxIndex == 1}">其他方式登录</div>
        </div>
        <!-- 微信 -->
-       <div class="loginContent" style="display:none;">
+       <div class="loginContent" v-show="boxIndex == 0">
            <div class="loginCon"></div>
            <div class="wxTips">打开微信扫一扫</div>
        </div>
        <!-- 手机号 登录-->
-        <div class="otherLoginContent" style="display:none;">
+        <div class="otherLoginContent" v-show="boxIndex == 1">
             <div class="otherLineOne">
                 <span>账号登录</span>
-                <span>快速注册</span>
+                <span @click="tapRegister(2)">快速注册</span>
                 <span>没有账号?</span>
             </div>
             <div class="phoneBox">
-                <input type="text" placeholder="请输入手机号">
-            </div>
-            <div class="passwordBox">
-                <input type="text" placeholder="请输入密码">
-            </div>
-            <div class="loginBtn">登录</div>
-        </div>
-        <!-- 注册  -->
-        <div class="registBox" style="display:none;">
-           <div class="phoneBox">
-                <el-select v-model="value" placeholder="请选择">
+                <el-select v-model="value" placeholder="+86" @change=changeValue>
                     <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -36,23 +26,42 @@
                     :value="item.value">
                     </el-option>
                 </el-select>
-                <input type="text" placeholder="请输入手机号" class="registerPhone">
+                <input type="text" placeholder="请输入手机号" v-model="loginNum" style="    width: 213px;
+    float: right;">
             </div>
             <div class="passwordBox">
-                <input type="text" placeholder="请输入密码">
+                <input type="text" placeholder="请输入密码" v-model="loginPass">
+            </div>
+            <div class="loginBtn" @click="handleLoginBtn">登录</div>
+        </div>
+        <!-- 注册  -->
+        <div class="registBox" v-show="boxIndex == 2">
+           <div class="phoneBox">
+                <el-select v-model="value" placeholder="+86" @change=changeValue>
+                    <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>
+                <input type="text" placeholder="请输入手机号" class="registerPhone" v-model="registerNum">
+            </div>
+            <div class="passwordBox">
+                <input type="text" placeholder="请输入密码" v-model="registerPass">
                 
             </div>
-            <span class="forgetPass">忘记密码</span>
+            <span class="forgetPass" @click="tapForgetPass(3)">忘记密码</span>
             <div class="testCodeBox">
                 <input type="text" class="testCode">
-                <div class="codeBox"></div>
+                <div class="codeBox">发送验证码</div>
             </div> 
-            <div class="loginBtn">立即登录</div>
+            <div class="loginBtn" @click="handleRegister">立即注册</div>
         </div>
         <!--  忘记密码-->
-        <div class="registBox" >
+        <div class="registBox"  v-show="boxIndex == 3">
            <div class="phoneBox">
-                <el-select v-model="value" placeholder="请选择">
+                <el-select v-model="value" placeholder="请选择" @change=changeValue>
                     <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -82,24 +91,101 @@
                 password: '123',
                 phone: '',
                 value:'', // 选中的值
+                registerNum:'', //注册手机号
+                registerPass:'', //注册密码
+                loginNum:'',
+                loginPass:'',
                 options: [{
                     value: '选项1',
-                    label: '黄金糕'
+                    label: '中国大陆(+86)'
                     }, {
                     value: '选项2',
-                    label: '双皮奶'
+                    label: '台湾(+886)'
                     }, {
                     value: '选项3',
-                    label: '蚵仔煎'
+                    label: '香港(+852)'
                     }, {
                     value: '选项4',
-                    label: '龙须面'
-                    }, {
-                    value: '选项5',
-                    label: '北京烤鸭'
-                }],
+                    label: '澳门(+853)'
+                    }],
+                boxIndex: 0,  //登录切换
+                showInps: 0,  // 登录，注册，忘记密码切换
+                label:'', //选中的区号
             }
         },
+        methods:{
+            // 微信和手机号登录切换
+            wxBox(index) {
+                this.boxIndex = index;
+            },
+            otherBox(index) {
+                this.boxIndex = index;
+            },
+            // 登录，注册，忘记密码切换
+            tapRegister(index) {
+               this.boxIndex = index;
+               
+            },
+            tapForgetPass(index) {
+                this.boxIndex = index;
+            },
+            //  注册
+            handleRegister() {
+                let regLabel = '';
+                if(!this.label){
+                    regLabel = '+86';
+                } else {
+                    regLabel = this.label
+                }
+                let data = {
+                    phone_num: regLabel+this.registerNum,
+                    password: this.registerPass
+                };
+                this.axios.post('/user/register', data).then(res=>{
+                    if(res.data.code == '200') {
+                        this.boxIndex = 1;  //登录
+                    }
+                    if(res.data.code == '405') {
+                        alert(res.data.detail)
+                    }
+                }).catch(err=>{
+                    console.log(err)
+                })
+            },
+            // 获取选中区间号
+            changeValue(value) {
+                let obj = {};
+                obj = this.options.find((item)=>{
+                    return item.value === value;
+                });
+               let pattern =new RegExp("\\((.| )+?\\)","igm");
+               let labell = obj.label.match(pattern).toString();
+                this.label = labell.substring(1,labell.length-1);
+            },
+            // 登录
+            handleLoginBtn() {
+                let regLabel = '';
+                if(!this.label){
+                    regLabel = '+86';
+                } else {
+                    regLabel = this.label
+                }
+                let data = {
+                    phone_num: regLabel+this.loginNum,
+                    password: this.loginPass
+                };
+                this.axios.post('/user/login', data).then(res=>{
+                    if(res.data.code == '418') {
+                        alert(res.data.detail)
+                    }
+                    if(res.data.code == '200') {
+                        this.$router.push({path:'/'})
+                    }
+                }).catch(err=>{
+                    console.log(err)
+                })
+            }
+        }
     }
 </script>
 <style>
@@ -122,6 +208,10 @@
     color: #000;
     text-align: center;
     float: left;
+    cursor: pointer;
+}
+.loginActive{
+    color: #007AEF;
 }
 .loginBtn{
     height: 40px;
@@ -131,6 +221,7 @@
     font: 18px/40px "微软雅黑";
     color: #fff;
     margin-top: 35px;
+    cursor: pointer;
 }
 .otherLogin{
     width: 49%;
@@ -164,6 +255,7 @@ float: left;
 .otherLineOne span:nth-of-type(2){
 float: right;
 color: #007aef;
+cursor: pointer;
 }
 .otherLineOne span:nth-of-type(3){
 float: right;
@@ -220,6 +312,7 @@ margin-right: 6px;
     color: #007aef;
     margin-top: 8px;
     float: right;
+    cursor: pointer;
 }
 .testCodeBox{
     margin-top: 45px;
@@ -240,5 +333,6 @@ margin-right: 6px;
     font: 14px/36px "微软雅黑";
     color: #007aef;
     text-align: center;
+    cursor: pointer;
 }
 </style>

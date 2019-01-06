@@ -12,7 +12,7 @@
 <div class="type_dis"><span>最大单个文件</span><span>10M</span></div>
 <div class="type_dis"><span>任意类型转换</span><span style="    display: inline-block;
     width: 35px;">√</span></div>
-    <div class="loginBtn">登录/注册</div>
+    <div class="loginBtn" @click="handleLogin">登录/注册</div>
             </div>
             <div class="type_R">
 <div class="line_r"></div>
@@ -29,12 +29,10 @@
     width: 35px;">√</span></div>
     <div class="type_dis"><span>剩余次数永久有效</span><span style="    display: inline-block;
     width: 35px;">√</span></div>
-    <div class="buyFile" style="">立即购买</div>
+    <div class="buyFile" style="" @click="handleBuy">立即购买</div>
             </div>
         </div>
-        <!-- <div class="footerCon">
-            <footerFile></footerFile>
-        </div>     -->
+       <footerFile></footerFile> 
     </div>
 </template>
 <script>
@@ -48,7 +46,16 @@
             return {
                 value:12
             }
+        },
+        methods:{
+            handleLogin() {
+                this.$router.push({ path:'/login'})
+            },
+            handleBuy() {
+                this.$router.push({ path:'/priceChoice'})
+            }
         }
+
     }
 </script>
 <style scoped="scoped">
@@ -126,6 +133,7 @@
 border: 1px solid #008AEF;
 height:40px;
 width: 140px;
+cursor: pointer;
 color: #008AEF;
 text-align: center;
 font: 14px/40px "微软雅黑";

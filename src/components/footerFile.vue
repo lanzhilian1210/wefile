@@ -16,7 +16,7 @@
 </template>
 <style>
 .footerCon{
-    margin: 0 55px 50px;
+    margin: 50px 55px 20px;
     height: 80px;
 }
 .about{

@@ -46,7 +46,8 @@
 
             </div>
         </ul>
-        <div class="chooseFileBox">
+        <!-- 选择转换目标文件 -->
+        <div class="chooseFileBox" v-show="hasChooseFileBox">
             <div class="fileTile">选择需要的文件</div>
             <div class="fileName">
                 <div @click="chooseFile(1)" :class="{'acClass1': chooseIndex == 1}">
@@ -84,6 +85,7 @@
             </div>
             <div class="xFileBtn">开始转换</div>
         </div>
+
         <ul class="uploadList" v-show="otherFileList.length" style="margin-bottom:145px;">
             <div class="listTitle">当前并不支持以下格式转换</div>
             <li v-for="(lis,index) in otherFileList" :key="index">
@@ -92,6 +94,7 @@
                 <img src="../../static/img/delete.png" alt="" class="deleteLis" @click="delteOtherLis(index)">
             </li>
         </ul>
+        <div class="xFileBtn" @click="submitUpload">操作</div>
     </div>
 </template>
 <script>
@@ -111,6 +114,7 @@
                 currentShow:-1,
                 progress: 0,
                 chooseIndex: 0,
+                hasChooseFileBox:false
             }
         },
         methods:{
