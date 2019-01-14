@@ -18,6 +18,9 @@
 .footerCon{
     margin: 50px 55px 20px;
     height: 80px;
+        position: fixed;
+    bottom: 0;
+    width: 1100px;
 }
 .about{
     float: left;

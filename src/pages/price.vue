@@ -32,7 +32,7 @@
     <div class="buyFile" style="" @click="handleBuy">立即购买</div>
             </div>
         </div>
-       <footerFile></footerFile> 
+       <!-- <footerFile></footerFile>  -->
     </div>
 </template>
 <script>

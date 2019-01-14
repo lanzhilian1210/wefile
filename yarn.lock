@@ -263,6 +263,10 @@ autoprefixer@^7.1.2:
     postcss "^6.0.17"
     postcss-value-parser "^3.2.3"
 
+awe-dnd@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/awe-dnd/-/awe-dnd-0.3.4.tgz#5913d12e0bd32f3e7e4f6361a870e8ea623496eb"
+
 aws-sign2@~0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/aws-sign2/-/aws-sign2-0.7.0.tgz#b46e890934a9591f2d2f6f86d7e6a9f1b3fe76a8"

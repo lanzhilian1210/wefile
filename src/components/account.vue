@@ -98,6 +98,20 @@ export default {
             isDisplayPhone:false, //电话号
             isDisplayWx:false, // 微信
             isDisplayPass:false, //密码
+            options: [{
+                    value: '选项1',
+                    label: '中国大陆(+86)'
+                    }, {
+                    value: '选项2',
+                    label: '台湾(+886)'
+                    }, {
+                    value: '选项3',
+                    label: '香港(+852)'
+                    }, {
+                    value: '选项4',
+                    label: '澳门(+853)'
+                    }],
+            value:'',
         }
     },
     methods:{

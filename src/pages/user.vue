@@ -3,7 +3,8 @@
         <div class="userLeft">
             <div class="leftTop">
                 <div class="leftRadius">FREE</div>
-                <div class="restore">剩余10次</div>
+                <div class="restore" >升级为VIP版</div>
+                <!-- <div class="restore">剩余10次</div> -->
             </div>
             <div class="userItems">
                 <div @click="handleTab(0)" :class="{'tabActive': isDisplayComponent === 0}">主页</div>
@@ -89,6 +90,7 @@ export default {
         color: #000;
         margin-bottom: 30px;
         text-align: center;
+        cursor: pointer;
     }
     .tabActive{
         font-weight: bold !important;

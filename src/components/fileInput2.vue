@@ -1,25 +1,27 @@
 <template>
     <div class="inputBox">
         <div class="uploadBox"> 
-            <file-upload
-                class="upload"
-                post-action="http://localhost:3000/users/bar"
-                :multiple="true"
-                :drop="true"
-                :drop-directory="true"
-                v-model="fileList" 
-                @input-file="inputFile" 
-                @input-filter="inputFilter"
-                ref="upload" style="width:100%;height:100%;">
-                <div class="txtDis">将PDF与Office文件互相转换</div>
-                <div class="txtDis2">选择文件</div>
-            </file-upload>                
+            <el-upload
+                class="upload-demo"
+                drag
+                ref="upload"
+                :auto-upload="false"
+                :on-error="handleError"
+                :on-success="handleSuccess"
+                :on-change="handleChange"
+                :on-progress="handleProgress"
+                :on-remove="handleRemove"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                multiple>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            </el-upload>               
         </div>
-        <ul class="fileList">
+        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+        <!-- <ul class="fileList">
             <li>
                 <img src="../../static/img/money.jpg" alt=""><span>文件名</span><img src="../../static/img/delete.png" class="delete">
             </li>
-        </ul>
+        </ul> -->
         <!-- <div class="xFileBtn" @click="submitUpload">操作</div> -->
     </div>
 </template>
@@ -43,70 +45,34 @@
             }
         },
         methods:{
-            // 文件过滤
-            inputFilter(newFile, oldFile, prevent) {
-                if (newFile && !oldFile) {
-                    // console.log('上传');
-                // 添加文件
-                // 过滤非图片文件
-                // 不会添加到 files 去
-                    if (/\.(jpeg|jpe|jpg|png|webp|html)$/i.test(newFile.name)) {
-                        this.otherFileList.push(newFile); //其他类型文件
-                        return prevent();
-                    } else {
-                        this.fileList.push(newFile);//存储pdf
-                        
-                    }
-                    console.log(this.fileList)
+            handleProgress(event, file, fileList){
+                // console.log(file.percentage)
+                if(file.percentage>98){
+                    return false;
                 }
             },
-            // input-file 事件
-            // 上传文件
-            inputFile(newFile, oldFile) {
 
-                if (newFile && !oldFile) {
-                    // 添加文件
-                    this.$emit('childEvent',false);
-                    // console.log(this.fileList)
-                }
-
-                if (newFile && oldFile) {
-                    // 更新文件
-                    
-                    // 开始上传
-                    if (newFile.active !== oldFile.active) {
-                    console.log('Start upload', newFile.active, newFile)
-
-                    // 限定最小字节
-                    if (newFile.size >= 0 && newFile.size < 100 * 1024) {
-                        newFile = this.$refs.upload.update(newFile, {error: 'size'})
-                    }
-                    }
-
-                    // 上传进度
-                    if (newFile.progress !== oldFile.progress) {
-                    console.log('progress', newFile.progress, newFile)
-                    }
-
-                    // 上传错误
-                    if (newFile.error !== oldFile.error) {
-                    console.log('error', newFile.error, newFile)
-                    }
-
-                    // 上传成功
-                    if (newFile.success !== oldFile.success) {
-                    console.log('success', newFile.success, newFile)
-                    }
-                }
-
-                },
-            // 上传
-            submitUpload() { 
-                this.$refs.upload.active = true;
+            handleChange(file, fileList){
+                console.log(file,fileList);
+                this.fileList = fileList;
             },
-            // 取消上传
-            cancelTransfor(lis) {
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
             },
+            handleSuccess(response, file, fileList){
+                console.log(response)
+            },
+            handleError(err, file, fileList){
+                console.log(this.fileList )
+                fileList = this.fileList;
+                console.log(fileList)
+            },
+            submitUpload() {
+                console.log(this.fileList)
+                this.$refs.upload.submit();
+            },
+
+
         },
         filters:{
             formatSize(size) {

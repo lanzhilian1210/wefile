@@ -7,8 +7,7 @@
        </div>
        <!-- 微信 -->
        <div class="loginContent" v-show="boxIndex == 0">
-           <div class="loginCon"></div>
-           <div class="wxTips">打开微信扫一扫</div>
+           <div class="loginCon" id="login_container"></div>
        </div>
        <!-- 手机号 登录-->
         <div class="otherLoginContent" v-show="boxIndex == 1">
@@ -45,10 +44,10 @@
                     :value="item.value">
                     </el-option>
                 </el-select>
-                <input type="text" placeholder="请输入手机号" class="registerPhone" v-model="registerNum">
+                <input type="text" placeholder="请输入手机号" class="registerPhone" v-model="registerNum" @blur="textPhone">
             </div>
             <div class="passwordBox">
-                <input type="text" placeholder="请输入密码" v-model="registerPass">
+                <input type="text" placeholder="请输入密码" v-model="registerPass" @blur="testPass">
                 
             </div>
             <span class="forgetPass" @click="tapForgetPass(3)">忘记密码</span>
@@ -76,14 +75,17 @@
                 
             </div>
             <div class="testCodeBox">
-                <input type="text" class="testCode">
-                <div class="codeBox">发送验证码</div>
+                <input type="text" class="testCode" v-model="testNum">
+                <div class="codeBox" @click="testMobile">发送验证码</div>
             </div> 
             <div class="loginBtn">立即登录</div>
         </div>
     </div>
 </template>
+
 <script>
+import jquery from '../config/jquery-1.10.1.min.js';
+import '../config/wxLogin.js'
     export default{
         data() {
             return {
@@ -111,9 +113,45 @@
                 boxIndex: 0,  //登录切换
                 showInps: 0,  // 登录，注册，忘记密码切换
                 label:'', //选中的区号
+                testNum:'', //验证码
             }
         },
+        mounted() {
+            function S4() {
+                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            }
+            function guid() {
+                return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+            }
+            let uuid = "cms"+guid();
+            let obj = new WxLogin({
+                self_redirect:false,
+                id:"login_container", 
+                appid: "wx89ec7ad47b8b75b7", 
+                scope: "snsapi_login", 
+                redirect_uri: encodeURIComponent(`http://wefile.com/user/snswxlogin?uuid=${uuid}`), 
+                state: Math.ceil(Math.random()*1000), 
+                style: "block",
+                href: ""
+            });
+        },
         methods:{
+            // 手机号验证
+            textPhone() {
+                let  phone = this.registerNum;
+                if(!(/^1(3|4|5|7|8)\d{9}$/.test(phone))){ 
+                    alert("手机号码有误，请重填");  
+                    return false; 
+                } 
+            },
+            testPass() {
+                let  password = this.registerPass;
+                let myreg=/^(?![A-Z]+$)(?![a-z]+$)(?!\d+$)(?![\W_]+$)\S{6,15}$/
+                if(!(myreg.test(password))){ 
+                    alert("密码长度6-15位,且由字母和数字组成");  
+                    return false; 
+                } 
+            },
             // 微信和手机号登录切换
             wxBox(index) {
                 this.boxIndex = index;
@@ -128,6 +166,15 @@
             },
             tapForgetPass(index) {
                 this.boxIndex = index;
+            },
+            // 验证码
+            testMobile(){
+                this.axios.get(`/user/sms?phone_num=${this.registerNum}`).then(res=>{
+                    console.log(res);
+                    
+                }).catch(err=>{
+                    console.log(err);
+                });
             },
             //  注册
             handleRegister() {
@@ -174,12 +221,15 @@
                     phone_num: regLabel+this.loginNum,
                     password: this.loginPass
                 };
-                this.axios.post('/user/login', data).then(res=>{
+                this.axios.put('/user/login', data).then(res=>{
                     if(res.data.code == '418') {
                         alert(res.data.detail)
                     }
                     if(res.data.code == '200') {
-                        this.$router.push({path:'/'})
+                        console.log(res.data.data.token)
+                        sessionStorage.setItem('token',res.data.data.token);
+                        alert('登录成功');
+                        this.$router.push({path:'/'});
                     }
                 }).catch(err=>{
                     console.log(err)
@@ -271,13 +321,10 @@ margin-right: 6px;
     width: 100%;
     outline: none;
 }
-.loginCon{
-    height: 240px;
-    width: 240px;
-    background: #e4e4e4;
+.loginCon iframe{
     position: absolute;
     left: 0;
-    top: 0;
+    top: 90px;
     right: 0;
     bottom: 0;
     margin: auto;

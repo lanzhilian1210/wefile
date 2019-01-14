@@ -10,6 +10,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from '@/config/public.js'
 /* eslint-disable no-new */
+import VueDND from 'awe-dnd'
+Vue.use(VueDND)
 Vue.use(ElementUI);
 Vue.prototype.axios = axios;
 new Vue({
@@ -18,3 +20,4 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+ 

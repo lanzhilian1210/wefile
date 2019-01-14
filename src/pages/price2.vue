@@ -1,13 +1,13 @@
 <template>
     <div>
-        <div class="priceBoxTitle">
+        <!-- <div class="priceBoxTitle">
             <div>选择VIP版套餐</div>
             <div>新购1次送10次</div>
-        </div>
+        </div> -->
         <div class="priceBox">
             <div class="boxTop">
-                <div class="priceName">转换套餐</div>
-                <div class="priceMenu">
+                <!-- <div class="priceName">转换套餐</div> -->
+                <div class="priceMenu" style="display:none;">
                     <div class="menuConf" :class="{activeClass: activeIndex == 0}" @click="tabMenu(0)">
                         <div class="menuTop">1次</div>
                         <div class="menuLine"></div>
@@ -50,12 +50,12 @@
                     </div>
                 </div>
                 </div>
-                    <div class="priceName">支付方式</div>
-                <div class="typePrice">
+                    <!-- <div class="priceName">支付方式</div> -->
+                <div class="typePrice" style="display:none;">
                     <div class="wxCoin" :class="{cionClass: cionIndex == 0}" @click="tabCion(0)">微信支付</div>
                     <div class="wxCoin" :class="{cionClass: cionIndex == 1}" @click="tabCion(1)">支付宝支付</div>
                 </div>
-                <div class="priceTable">
+                <div class="priceTable" style="display:none;">
                     <div class="shouldPayBox">
                         <span>应付金额</span>
                         <span>￥{{moneyLis}}</span>
@@ -65,8 +65,11 @@
                         <span>{{transforLis}}次</span>
                     </div>
                 </div>
-                <div class="payRightNow" @click="handlePayNow">立即支付</div>
+                <!-- <div class="payRightNow" @click="handlePayNow">立即支付</div> -->
+                <div  @click="handlePayNow">立即支付</div>
                 
+                <div class="mask" v-show="showMask"></div>
+                <img :src="wxChatUrl" class="wxMask" v-show="showMask">
         </div>
     </div>
 </template>
@@ -75,12 +78,17 @@ export default {
     data() {
         return {
             activeIndex:-1,
-            cionIndex:-1,
+            cionIndex:0,
             pay_fee:0,
             moneyList:[1.00,10.00,20.00,50.00,100.00,200.00,500.00,1000.00],
             transforList:[11,20,35,68,120,250,700,1500],
             moneyLis:0, //支付金额
             transforLis:0, //转换次数
+            wxChatUrl:'', //微信支付
+            showMask:false, 
+            order_id:'',
+            timer:null, // 定时器
+            timer2:null, //延时
         }
     },
     methods:{
@@ -93,16 +101,30 @@ export default {
             this.cionIndex = index;
         },
         handlePayNow() {
+            let token = sessionStorage.getItem('token');
+            let _token = {headers:{'Authorization':token}};
+            // let data = {
+            //     "pay_fee": this.moneyLis
+            // }
             let data = {
-                "pay_fee": this.moneyLis
+                "pay_fee": 1
             }
             if(this.cionIndex == -1){
                 alert('请选择支付方式')
             }
             // 支付宝支付
             if(this.cionIndex == 1) {
-                this.axios.post('/alipay/pay', data).then(res=>{
-                    console.log(res)
+                this.axios.post('/alipay/pay',data).then(res=>{
+                    // console.log(res.data.data)
+                    this.order_id = res.data.data.order_id;
+                              if(this.order_id) {
+                                clearInterval(this.timer);
+                                this.timer = setInterval(()=>{
+                                    this.payStatus(this.order_id)
+                                },4000)
+                            }  
+                    // location.href = res.data.data.url
+                    window.open(res.data.data.url)
                 }).catch(err=>{
                     console.log(err)
                 })
@@ -110,12 +132,74 @@ export default {
             // 微信支付
             if(this.cionIndex == 0) {
                 this.axios.post('/wechat/pay', data).then(res=>{
-                    console.log(res)
+                    console.log(res.data.data)
+                    if(res.data.code == '200') {
+                        this.showMask = true;
+                    }
+                    this.order_id = res.data.data.order_id;
+                    this.wxChatUrl = 'data:image/png;base64,' + res.data.data.qrcode;
+                    if(this.order_id) {
+                        this.timer = setInterval(()=>{
+                            this.payStatus(this.order_id)  //支付状态
+                        },3000)
+                    } 
                 }).catch(err=>{
                     console.log(err)
                 })
             }
             
+        },
+        // 支付状态
+        payStatus(order_id) {
+            //微信
+            if(this.cionIndex == 0) {
+                this.axios.get(`/wechat/info/${order_id}`).then(res=>{
+                    console.log(res);
+                    if(res.data.data.status == 2) {
+                        this.$message({
+                            type: 'error',
+                            message: '支付失败'
+                        })
+                        console.log(res.status,'clear');
+                        clearInterval(this.timer);
+                    }
+                    if(res.data.data.status == 3) {
+                        this.$message({
+                            type: 'success',
+                            message: '支付完成'
+                        })
+                        this.showMask = false;
+                        console.log(res.status,'success');
+                        clearInterval(this.timer);
+                    }
+                }).catch(err=>{
+                    console.log(err)
+                })
+            }
+            // 支付宝
+            if(this.cionIndex == 1) {
+                this.axios.get(`/alipay/info/${order_id}`).then(res=>{
+                    console.log(res.data.data.status)
+                    if(res.data.data.status == 2) {
+                        this.$message({
+                            type: 'error',
+                            message: '支付失败'
+                        })
+                        console.log(res.status,'clear');
+                        clearInterval(this.timer);
+                    }
+                    if(res.data.data.status == 3) {
+                        this.$message({
+                            type: 'success',
+                            message: '支付完成'
+                        })
+                        console.log(res.status,'clear');
+                        clearInterval(this.timer);
+                    }   
+                }).catch(err=>{
+                    console.log(err)
+                })
+            }
         }
 
     }
@@ -248,6 +332,7 @@ export default {
          font: 18px/60px "微软雅黑";
          color: #fff;
          text-align: center;
+         cursor: pointer;
     }
     .activeClass{
         border: 1px solid #007AEF;
@@ -255,5 +340,24 @@ export default {
     .cionClass{
         background: #007AEF;
         color: #fff;
+    }
+    .mask{
+        height: 100%;
+        width: 100%;
+        background: #000;
+        position: fixed;
+        left: 0;
+        top: 0;
+        opacity: 0.6;
+    }
+    .wxMask{
+        width: 258px;
+        height: 258px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
     }
 </style>

@@ -1,15 +1,15 @@
 <template>
 <div class="pageWapper">
     <fileHeader></fileHeader>
-    <fileInput></fileInput>
+    <fileInput @childEvent="childEvent"></fileInput>
     <!-- 描述 -->
      <fileText v-show="isShow"></fileText> 
-    <footerFile></footerFile> 
+    <!-- <footerFile></footerFile>  -->
 </div>
 </template>
 <script>
     import fileHeader from '../components/fileHeader';
-    import fileInput from '../components/fileInput1';
+    import fileInput from '../components/fileInput2';
     // import file from '../components/file';
     import fileText from '../components/fileText';
     import footerFile from '../components/footerFile';
@@ -19,13 +19,12 @@
         },
         data() {
             return {
-                isShow: true,
+                isShow: false,
             }
         },
         methods:{
-            getMsg(status){
-                console.log(status);
-                this.isShow = status;
+            childEvent(status){
+                this.isShow = status;  //上传文件后下面说明消失
             }
         }
     }

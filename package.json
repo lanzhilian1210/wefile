@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@xkeshi/image-compressor": "^0.5.3",
+    "awe-dnd": "^0.3.4",
     "axios": "^0.18.0",
     "cropperjs": "^1.4.1",
     "element-ui": "^2.4.6",
