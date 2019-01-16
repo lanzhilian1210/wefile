@@ -52,10 +52,10 @@
             </div>
             <span class="forgetPass" @click="tapForgetPass(3)">忘记密码</span>
             <div class="testCodeBox">
-                <input type="text" class="testCode">
-                <div class="codeBox">发送验证码</div>
+                <input type="text" class="testCode" v-model="verify_code">
+                <button class="codeBox" @click="handleCode(registerNum)" :disabled="isDisable">{{testMobile}}</button>
             </div> 
-            <div class="loginBtn" @click="handleRegister">立即注册</div>
+            <div class="loginBtn" @click="handleRegister">注册</div>
         </div>
         <!--  忘记密码-->
         <div class="registBox"  v-show="boxIndex == 3">
@@ -68,17 +68,17 @@
                     :value="item.value">
                     </el-option>
                 </el-select>
-                <input type="text" placeholder="请输入手机号" class="registerPhone">
+                <input type="text" placeholder="请输入手机号" class="registerPhone" v-model="forgetPhone">
             </div>
             <div class="passwordBox">
-                <input type="text" placeholder="请输入新密码">
+                <input type="text" placeholder="请输入新密码" v-model="forgetPass">
                 
             </div>
             <div class="testCodeBox">
-                <input type="text" class="testCode" v-model="testNum">
-                <div class="codeBox" @click="testMobile">发送验证码</div>
+                <input type="text" class="testCode" v-model="verify_code">
+                <button class="codeBox" @click="handleCode(forgetPhone)" :disabled="isDisable">{{testMobile}}</button>
             </div> 
-            <div class="loginBtn">立即登录</div>
+            <div class="loginBtn" @click="handleForget">立即登录</div>
         </div>
     </div>
 </template>
@@ -89,6 +89,9 @@ import '../config/wxLogin.js'
     export default{
         data() {
             return {
+                testMobile:'发送验证码',
+                auth_time:60,
+                isDisable:false,
                 name:'abc',
                 password: '123',
                 phone: '',
@@ -113,7 +116,10 @@ import '../config/wxLogin.js'
                 boxIndex: 0,  //登录切换
                 showInps: 0,  // 登录，注册，忘记密码切换
                 label:'', //选中的区号
-                testNum:'', //验证码
+                timer:null,
+                verify_code:'', //验证码
+                forgetPhone:'',
+                forgetPass:'',
             }
         },
         mounted() {
@@ -129,18 +135,55 @@ import '../config/wxLogin.js'
                 id:"login_container", 
                 appid: "wx89ec7ad47b8b75b7", 
                 scope: "snsapi_login", 
-                redirect_uri: encodeURIComponent(`http://wefile.com/user/snswxlogin?uuid=${uuid}`), 
+                redirect_uri: encodeURIComponent(`http://api.wefile.com/user/snswxlogin?uuid=${uuid}`), 
                 state: Math.ceil(Math.random()*1000), 
                 style: "block",
                 href: ""
             });
         },
         methods:{
+            // 手机验证码
+            handleCode(phone) {
+                this.isDisable = true;
+                let regLabel = '';
+                if(!this.label){
+                    regLabel = '+86';
+                } else {
+                    regLabel = this.label
+                }
+                let phone_num = regLabel+phone;
+                let data = {
+                    phone_num:phone_num
+                }
+                this.axios.post('/user/sms', data).then(res=>{
+                    if(res.data.code == '200') {
+                        this.timer = setInterval(()=>{
+                            this.auth_time --;
+                            this.testMobile = this.auth_time + 's';
+                            if (this.auth_time <= 0) {
+                                this.testMobile = '重发验证码';
+                                this.auth_time = 60;
+                                this.isDisable = false;
+                                clearInterval(this.timer);
+                            }
+                        },1000)
+                    } else {
+                        this.testMobile = '重发验证码';
+                        this.isDisable = false;
+                    }
+                    console.log(res);
+                }).catch(err=>{
+                    alert('服务器错误')
+                });
+            },
             // 手机号验证
             textPhone() {
                 let  phone = this.registerNum;
-                if(!(/^1(3|4|5|7|8)\d{9}$/.test(phone))){ 
-                    alert("手机号码有误，请重填");  
+                if(!(/^1(3|4|5|7|8)\d{9}$/.test(phone))){
+                    this.$message({
+                        type: 'warning',
+                        message: '手机号码有误，请重填'
+                        });  
                     return false; 
                 } 
             },
@@ -148,7 +191,10 @@ import '../config/wxLogin.js'
                 let  password = this.registerPass;
                 let myreg=/^(?![A-Z]+$)(?![a-z]+$)(?!\d+$)(?![\W_]+$)\S{6,15}$/
                 if(!(myreg.test(password))){ 
-                    alert("密码长度6-15位,且由字母和数字组成");  
+                    this.$message({
+                        type: 'warning',
+                        message: '密码长度6-15位,且由字母和数字组成'
+                        });
                     return false; 
                 } 
             },
@@ -167,15 +213,7 @@ import '../config/wxLogin.js'
             tapForgetPass(index) {
                 this.boxIndex = index;
             },
-            // 验证码
-            testMobile(){
-                this.axios.get(`/user/sms?phone_num=${this.registerNum}`).then(res=>{
-                    console.log(res);
-                    
-                }).catch(err=>{
-                    console.log(err);
-                });
-            },
+            
             //  注册
             handleRegister() {
                 let regLabel = '';
@@ -186,11 +224,12 @@ import '../config/wxLogin.js'
                 }
                 let data = {
                     phone_num: regLabel+this.registerNum,
-                    password: this.registerPass
+                    password: this.registerPass,
+                    verify_code: this.verify_code
                 };
-                this.axios.post('/user/register', data).then(res=>{
+                this.axios.put('/user/register', data).then(res=>{
                     if(res.data.code == '200') {
-                        this.boxIndex = 1;  //登录
+                        this.boxIndex = 1;  //跳登录
                     }
                     if(res.data.code == '405') {
                         alert(res.data.detail)
@@ -230,6 +269,31 @@ import '../config/wxLogin.js'
                         sessionStorage.setItem('token',res.data.data.token);
                         alert('登录成功');
                         this.$router.push({path:'/'});
+                    }
+                }).catch(err=>{
+                    console.log(err)
+                })
+            },
+            //忘记密码
+            handleForget() {
+                let regLabel = '';
+                if(!this.label){
+                    regLabel = '+86';
+                } else {
+                    regLabel = this.label
+                }
+                let data = {
+                    phone_num: regLabel+this.forgetPhone,
+                    password: this.forgetPass,
+                    verify_code: this.verify_code
+                };
+                this.axios.put('/user/forget_password', data).then(res=>{
+                    if(res.data.code == '200') {
+                       alert('新密码设置成功');
+                       this.$router.push({path:'/'});
+                    }
+                    if(res.data.code == '405') {
+                        alert(res.data.detail)
                     }
                 }).catch(err=>{
                     console.log(err)
@@ -381,5 +445,6 @@ margin-right: 6px;
     color: #007aef;
     text-align: center;
     cursor: pointer;
+    background: #fff;
 }
 </style>

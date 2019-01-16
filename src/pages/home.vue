@@ -20,9 +20,22 @@
         data() {
             return {
                 isShow: false,
+                token:'',
             }
         },
+        created() {
+ document.cookie = 'token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDc4Njg1NzQsIm5hbWUiOiLpmo_pgYfogIzlronllr3vvIEiLCJ1aWQiOjE3fQ.CbaUp3G_PrCGlkmt0JP6ovcZSA033AKlneT6HobejtE'
+        sessionStorage.setItem('token',this.getCookie());
+        },
+        mounted() {
+           this.token = sessionStorage.getItem('token'); 
+        },
         methods:{
+            getCookie(){
+                var arr1=document.cookie.split("; ");
+                var arr2=arr1[2].split("=");
+                return arr2[1];
+            },
             childEvent(status){
                 this.isShow = status;  //上传文件后下面说明消失
             }

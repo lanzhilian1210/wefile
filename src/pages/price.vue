@@ -126,7 +126,7 @@
     margin: auto;
     text-align: center;
     font: 14px/40px "微软雅黑";
-    color: #222;
+    color: #fff;
     cursor: pointer;
 }
 .buyFile{
