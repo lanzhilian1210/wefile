@@ -63,7 +63,7 @@
             }
         },
         mounted() {
-            this.getOssSign();
+            this.getOssSign(); // 获取后端给的签名
         },
         methods:{
             handleEnter(index){
@@ -95,10 +95,18 @@
             },
             handleProgress(event, file, fileList){
                 this.progress = file.percentage;
-                console.log(file.percentage);
+                if(this.progress > 50) {
+                    let timer = setInterval(()=>{
+                        this.progress += 2;
+                        if(this.progress>90){
+                            this.progress = 100;
+                            clearInterval(timer);
+                        }
+                    },50)
+                }
             },
             beforeAvatarUpload(file) {
-                console.log(file);
+                this.getOssSign(); // 上传之前获取后端给的签名
                 let index = file.name.lastIndexOf("\.");
                 let named = file.name.substring(index+1,file.name.length);
                 // 非pdf类型文件不能上传
@@ -134,7 +142,7 @@
                 console.log(file, fileList);
             },
             handleSuccess(response, file, fileList){
-                // console.log(response)
+               this.$message.warning('上传成功');
             },
             // 上传失败
             handleError(err, file, fileList){
