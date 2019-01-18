@@ -14,38 +14,34 @@
                 :on-change="handleChange"
                 :on-progress="handleProgress"
                 :on-remove="handleRemove"
-                action="https://jsonplaceholder.typicode.com/posts/"
+                :action="host"
+                :data="ossParams"
                 multiple>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
             </el-upload>               
         </div>
-        <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
         <ul class="fileList">
-            <li v-for="(item,index) in fileNewList" :key="index">
+            <li v-for="(item,index) in fileNewList" :key="index" @mouseenter="handleEnter(index)" @mouseleave="handleLeave(index)">
                 <div class="progress" :style="{'width':progress+'%'}"></div>
-                <img src="../../static/img/word.png" alt=""><span>{{item.name}}</span><img src="../../static/img/delete.png" class="delete">
+                <img src="../../static/img/word.png" alt=""><span>{{item.name}}</span><img src="../../static/img/delete.png" class="delete" @click="deleteLis(index)" :class="{'deleteActive': isDisplayDel === index}">
             </li>
         </ul>
         <div>以下文件不支持上传</div>
         <ul class="fileList">
-            <li v-for="(item,index) in otherFileList" :key="index">
-                <img src="../../static/img/word.png" alt=""><span>{{item.name}}</span><img src="../../static/img/delete.png" class="delete">
+            <li v-for="(item,index) in otherFileList" :key="index" @mouseenter="handleEnter(index)" @mouseleave="handleLeave(index)">
+                <img src="../../static/img/word.png" alt=""><span>{{item.name}}</span><img src="../../static/img/delete.png" class="delete" @click="deleteOtherLis(index)" :class="{'deleteActive': isDisplayDel === index}">
             </li>
         </ul>
-        <!-- <div class="xFileBtn" @click="submitUpload">操作</div> -->
-        <div @click="submitUpload">操作</div>
+        <div @click="submitUpload">上传至服务器</div>
     </div>
 </template>
 <script>
-    import FileUpload from 'vue-upload-component';
     export default{
-        components: {
-            FileUpload,
-        },
         data() {
             return {
                 fileNewList:[],// 存储pdf类型
                 otherFileList:[], //存储非pdf类型文件
+                isDisplayDel:-1,
                 size:0,
                 fileName: '',
                 current:-1,
@@ -53,16 +49,67 @@
                 progress: 0,
                 chooseIndex: 0,
                 hasChooseFileBox:false,
-                
+                host:'', // oss 地址
+                dir: '',
+                expire:'',
+                ossParams:{
+                    'success_action_status': '200', // 默认200
+                    'signature': '',
+                    'policy':'',
+                    'OssAccessKeyId': '',
+                    'key':'',
+                    'callback':'',
+                },
             }
         },
+        mounted() {
+            this.getOssSign();
+        },
         methods:{
+            handleEnter(index){
+                this.isDisplayDel = index;
+            },
+            handleLeave(index){
+                this.isDisplayDel = -1;
+            },
+            // 删除
+            deleteLis(index) {
+                this.fileNewList.splice(index,1)
+            },
+            deleteOtherLis(index) {
+                this.otherFileList.splice(index,1)
+            },
+            // 获取oss签名
+            getOssSign() {
+                this.axios.get('/upload/sign').then(res=>{
+                    this.host = 'http://' + res.data.data.host;
+                    this.ossParams.OssAccessKeyId = res.data.data.accessid;
+                    this.dir = res.data.data.dir;
+                    this.ossParams.signature = res.data.data.signature;
+                    this.ossParams.callback = res.data.data.callback;
+                    this.ossParams.policy = res.data.data.policy;
+                    this.expire = res.data.data.expire;
+                }).catch(err=>{
+                    console.log(err)
+                })
+            },
             handleProgress(event, file, fileList){
                 this.progress = file.percentage;
-                console.log(this.progress)
+                console.log(file.percentage);
             },
             beforeAvatarUpload(file) {
-                // console.log(file)
+                console.log(file);
+                let index = file.name.lastIndexOf("\.");
+                let named = file.name.substring(index+1,file.name.length);
+                // 非pdf类型文件不能上传
+                if(named != 'pdf') {
+                    this.$message({
+                        type: 'warning',
+                        message: '请上传pdf类型的文件'
+                        });
+                    return false;
+                }
+                this.ossParams.key = this.dir + file.name;
             },
             // 获取文件后缀
             handleChange(file, fileList){
@@ -87,15 +134,16 @@
                 console.log(file, fileList);
             },
             handleSuccess(response, file, fileList){
-                console.log(response)
+                // console.log(response)
             },
             // 上传失败
             handleError(err, file, fileList){
-                console.log('err',file )
+                console.log('err',file );
+                this.$message.warning('上传功能出了点问题，请重试');
             },
             // 上传文件至服务器
             submitUpload() {
-              console.log(this.fileList)
+            //   console.log(this.ossParams);
                 this.$refs.upload.submit();
             },
 
@@ -113,10 +161,7 @@
     top: 0;
 }
 .inputBox{
-    height: 300px;
     margin:160px 40px 0;
-    border: 1px solid #ccc;
-    background: #007AEF;
 }
 .uploadBox{
     width: 100% !important;
@@ -254,6 +299,10 @@ border: 2px solid #D34C2C !important;
     float: right;
     margin-top: 28px;
     margin-right: 30px;
+    display: none;
+}
+.deleteActive{
+    display: block;
 }
 .upload-demo{
   height: 300px;

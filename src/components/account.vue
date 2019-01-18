@@ -7,26 +7,28 @@
             </div>
             <div class="userAccountitem2">
                 <div class="userL">头像</div>
-                <img src="../../static/img/1.jpg" alt="">
+                <img :src="imgSrc">
                 <div class="changeInfo">修改</div>
+                <input type="file" class="uploadImg" @change="handleUploadImg($event)">
             </div>
             <!-- 更改称呼 -->
             <div class="userAccountitem2" v-show="!isDisplayName">
                 <div class="userL">称呼</div>
-                <span class="userInfo1">陆先生</span>
+                <span class="userInfo1">{{name}}</span>
                 <div class="changeInfo" @click="changInfo">修改</div>
             </div>
             <div class="userAccountitem4" style="height:145px;" v-show="isDisplayName">
                 <div class="userL" >称呼</div>
                 <div class="cancelName" @click="cancelChangeInfo">取消</div>
                 <div class="changeName">
-                    <input type="text">
+                    <input type="text" v-model="name">
                     <div @click="subChangeInfo">确认修改</div>
                 </div>
             </div>
             <!-- 手机号绑定之前 -->
             <div class="userAccountitem3" v-show="!isDisplayPhone">
                 <div class="userL">手机号</div>
+                <div class="phone">{{phone}}</div>
                 <div class="userR" @click="changPhone">立即绑定</div>
             </div>
             <!-- 绑定手机号 -->
@@ -41,14 +43,14 @@
                         :value="item.value">
                         </el-option>
                     </el-select>
-                    <input type="text" class="subPhone" placeholder="请输入手机号">
+                    <input type="text" class="subPhone" placeholder="请输入手机号" v-model="phone">
                     <div class="getCode">获取验证码</div>
                     <div class="cancelPhone" @click="cancelPhone">取消</div>
                 </div>
                 <div class="itemPhoneBt" style="width:100%;">
                    <div style="height:80px;">
-                       <span class="titlePhone">验证码</span>  
-                   <input type="text" class="subCode" placeholder="请输入验证码">
+                       <span class="titlePhone" @click="handleCode(phone)">验证码</span>  
+                   <input type="text" class="subCode" placeholder="请输入验证码" v-model="subCode">
                    </div>
                    <div class="savePhone" @click="subChangePhone">保存</div>
                 </div>  
@@ -82,8 +84,8 @@
                 <div class="userPass">密码</div>
                 <div class="cancelPass" @click="cancelPass">取消</div>
                 <div class="userPassIps">
-                    <input type="text" placeholder="输入新密码">
-                    <input type="text" placeholder="确认密码">
+                    <input type="text" placeholder="输入新密码" v-model="changePassNum" @blur="testPass">
+                    <input type="text" placeholder="确认密码" v-model="changeNewPass"> 
                     <div class="savePass" @click="saveNewPass">保存</div>
                 </div>
             </div>
@@ -94,6 +96,10 @@
 export default {
     data() {
         return {
+            name:'陆先生',
+            phone:'',
+            subCode:'',
+            imgSrc:'../../static/img/upload.jpg', //头像
             isDisplayName:false, //称呼
             isDisplayPhone:false, //电话号
             isDisplayWx:false, // 微信
@@ -112,9 +118,24 @@ export default {
                     label: '澳门(+853)'
                     }],
             value:'',
+            timer:null,
+            changePassNum:'',
+            changeNewPass:'',
         }
     },
     methods:{
+        // 上传图片
+        handleUploadImg(e){
+            let file = e.target.files[0];
+            if(file) {
+                let that = this;
+                let reader = new FileReader()
+                reader.readAsDataURL(file)
+                reader.onload= function(e){
+                    that.imgSrc = e.target.result;
+                }
+            }
+        },
         // 修改称呼
         changInfo() {
             this.isDisplayName = true;
@@ -130,10 +151,76 @@ export default {
         changPhone() {
            this.isDisplayPhone = true;
         },
-        //保存修改
+        //保存修改手机号
         subChangePhone() {
-             this.isDisplayPhone = false;
+            if(!(/^1(3|4|5|7|8)\d{9}$/.test(this.phone))){
+                this.$message({
+                    type: 'warning',
+                    message: '手机号码有误，请重填'
+                    });  
+                return false; 
+            }  else {
+                // 请求接口
+                let regLabel = '';
+                if(!this.label){
+                    regLabel = '+86';
+                } else {
+                    regLabel = this.label
+                }
+                let phone_num = regLabel+phone;
+                let data = {
+                    phone_num:phone_num
+                }
+                this.axios.put('/user/register', data).then(res=>{
+                    if(res.data.code == '200') {
+                        this.$message({
+                        type: 'success',
+                        message: '手机号码绑定成功'
+                        });
+                       this.isDisplayPhone = false;
+                    }
+                    if(res.data.code == '405') {
+                        alert(res.data.detail)
+                    }
+                }).catch(err=>{
+                    console.log(err)
+                })   
+            }  
         },
+        // 手机验证码
+            handleCode(phone) {
+                this.isDisable = true;
+                let regLabel = '';
+                if(!this.label){
+                    regLabel = '+86';
+                } else {
+                    regLabel = this.label
+                }
+                let phone_num = regLabel+phone;
+                let data = {
+                    phone_num:phone_num
+                }
+                this.axios.post('/user/sms', data).then(res=>{
+                    if(res.data.code == '200') {
+                        this.timer = setInterval(()=>{
+                            this.auth_time --;
+                            this.testMobile = this.auth_time + 's';
+                            if (this.auth_time <= 0) {
+                                this.testMobile = '重发验证码';
+                                this.auth_time = 60;
+                                this.isDisable = false;
+                                clearInterval(this.timer);
+                            }
+                        },1000)
+                    } else {
+                        this.testMobile = '重发验证码';
+                        this.isDisable = false;
+                    }
+                    console.log(res);
+                }).catch(err=>{
+                    alert('服务器错误')
+                });
+            },
         // 取消修改手机号
         cancelPhone() {
            this.isDisplayPhone = false;  
@@ -147,7 +234,28 @@ export default {
         },
         // 修改密码
         changePass() {
-            this.isDisplayPass = true;
+            if(this.changeNewPass !== this.changePassNum) {
+                this.$message({
+                    type: 'warning',
+                    message: '两次输入的密码不一致'
+                    });
+                return false; 
+            } else {
+                this.isDisplayPass = true;
+            }
+            
+        },
+        // 密码正则校验
+        testPass() {
+            let  password = this.changePassNum;
+            let myreg=/^(?![A-Z]+$)(?![a-z]+$)(?!\d+$)(?![\W_]+$)\S{6,15}$/
+            if(!(myreg.test(password))){ 
+                this.$message({
+                    type: 'warning',
+                    message: '密码长度6-15位,且由字母和数字组成'
+                    });
+                return false; 
+            } 
         },
         //取消修改密码
         cancelPass() {
@@ -161,6 +269,11 @@ export default {
 }
 </script>
 <style lang="">
+    .phone{
+        float: left;
+        font: 18px/80px "\5FAE\8F6F\96C5\9ED1";
+        margin-left: 40px;
+    }
     .userAccountItems{
         width: 840px;
         border-left: 1px solid #e4e4e4;
@@ -189,6 +302,7 @@ export default {
         padding-bottom: 10px;
         margin-left: 90px;
         border-bottom: 1px solid #e4e4e4;
+        position: relative;
     }
     .userAccountitem3{
         height: 70px;
@@ -207,12 +321,22 @@ export default {
         height: 58px;
         width: 58px;
         margin: 10px 0 0 70px;
+        border-radius: 50%;
     }
     .changeInfo{
         float: right;
         font: 14px/80px "微软雅黑";
         color: #007aef;
         margin-right: 20px;
+        cursor: pointer;
+    }
+    .uploadImg{
+        position: absolute;
+        right: 0;
+        top: 30px;
+        width: 50px;
+        opacity: 0;
+        cursor: pointer;
     }
     .userPass{
         height: 220px;
@@ -234,6 +358,7 @@ export default {
         color: #007aef;
         margin-top: 8px;
         margin-right: 10px;
+        cursor: pointer;
     }
     .userInfo1{
        font: 14px/80px "微软雅黑";
@@ -262,6 +387,7 @@ export default {
         background: #007aef;
         color: #fff;
         margin-top: 10px;
+        cursor: pointer;
     }
     .userR{
         float: left;
@@ -320,6 +446,7 @@ export default {
         color: #007aef;
         margin-top: 8px;
         margin-right: 10px;
+        cursor: pointer;
     }
     .subCode{
         height: 38px;

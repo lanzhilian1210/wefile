@@ -118,7 +118,7 @@
 .loginBtn{
     width: 140px;
     height: 40px;
-    border: 1px solid #797979;
+    border: 1px solid #008AEF;
     position: absolute;
     left: 0;
     right: 0;
@@ -126,7 +126,7 @@
     margin: auto;
     text-align: center;
     font: 14px/40px "微软雅黑";
-    color: #fff;
+    color: #008AEF;
     cursor: pointer;
 }
 .buyFile{
