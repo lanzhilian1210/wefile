@@ -3,7 +3,7 @@ import Router from 'vue-router'
 const Home = () => import('@/pages/home')
 const login = () => import('@/pages/login')
 const price  = () => import('@/pages/price')
-const priceChoice = () => import('@/pages/price2')
+const priceChoice = () => import('@/pages/priceChoice')
 const about = () => import('@/pages/about') //about组件
 const user = () => import('@/pages/user') // 个人中心
 const demo = () => import('@/pages/demo') // 上传demo

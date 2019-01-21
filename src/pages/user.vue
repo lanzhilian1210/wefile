@@ -3,8 +3,8 @@
         <div class="userLeft">
             <div class="leftTop">
                 <div class="leftRadius">FREE</div>
-                <div class="restore" >升级为VIP版</div>
-                <!-- <div class="restore">剩余10次</div> -->
+                <!-- <div class="restore" >升级为VIP版</div> -->
+                <div class="restore">剩余10次</div>
             </div>
             <div class="userItems">
                 <div @click="handleTab(0)" :class="{'tabActive': isDisplayComponent === 0}">主页</div>
@@ -32,11 +32,22 @@ export default {
     data() {
         return {
             isDisplayComponent:0,
+            hasCount:0, //剩余次数
         }
+    },
+    mounted() {
+       this.getTransforCount();
     },
     methods:{
         handleTab(index){
             this.isDisplayComponent = index;
+        },
+        getTransforCount() {
+            this.axios.get('/user/uselist').then(res=>{
+                console.log(res.data);
+            }).catch(err=>{
+                console.log(err);
+            })
         }
     }
 }
