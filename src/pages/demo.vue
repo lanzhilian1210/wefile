@@ -1,6 +1,6 @@
 <template>
     <div class="inputBox">
-        <div class="uploadBox"> 
+        <div class="uploadBox" :class="{'upload_active':isPdf==true}"> 
             <el-upload
                 class="upload-demo"
                 drag
@@ -17,8 +17,17 @@
                 :action="host"
                 :data="ossParams"
                 multiple>
-                <div class="text_file1" v-show="token">将PDF文件和Office文件相互转换</div>
-                <div class="text_file2">选择文件</div>
+        
+                <div class="tips" v-show="isPdf">
+                    <span><svg class="icon" width="48px" height="48.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M513.550821 60.225663c-248.290923 0-449.579345 201.299679-449.579345 449.625394 0 248.296039 201.288422 449.594695 449.579345 449.594695 248.285806 0 449.640744-201.299679 449.640744-449.594695C963.192587 261.525342 761.836627 60.225663 513.550821 60.225663zM513.671571 917.673369c-225.166249 0-407.696446-182.53736-407.696446-407.706679S288.505321 102.254895 513.671571 102.254895c225.173412 0 407.703609 182.541453 407.703609 407.710772S738.844983 917.673369 513.671571 917.673369z" fill="#FFCC00" /><path d="M366.566188 453.597869c0 7.726985-9.204639 13.995759-20.559245 13.995759l0 0c-11.347442 0-20.551058-6.268774-20.551058-13.995759L325.455885 336.364841c0-7.726985 9.204639-13.995759 20.551058-13.995759l0 0c11.354606 0 20.559245 6.268774 20.559245 13.995759L366.566188 453.597869z" fill="#FFCC00" /><path d="M701.708178 453.597869c0 7.726985-9.203616 13.995759-20.560268 13.995759l0 0c-11.346419 0-20.550035-6.268774-20.550035-13.995759L660.597875 336.364841c0-7.726985 9.203616-13.995759 20.550035-13.995759l0 0c11.356652 0 20.560268 6.268774 20.560268 13.995759L701.708178 453.597869z" fill="#FFCC00" /><path d="M786.034748 516.844332c-8.266267 146.885372-126.999462 265.030166-272.453229 265.030166-145.459906 0-264.189008-118.144794-272.455275-265.030166l-46.750767 0c5.372358 171.733293 146.171104 309.314765 319.206042 309.314765 173.028798 0 313.831638-137.580448 319.203996-309.314765L786.034748 516.844332z" fill="#FFCC00" /></svg></span>
+                    <div style="margin-left:20px;">
+                      <p style="font-size:20px;color:#222;">所选文件不是PDF、Office常用格式</p>
+                      <p style="margin:10px 0;color:#222;">当前只支持以上格式相互转换</p>
+                      <P style="color:#007aef">重新选择</p>
+                    </div>
+                </div>
+                <div class="text_file1" v-show="!isPdf">将PDF文件和Office文件相互转换</div>
+                <div class="text_file2" v-show="!isPdf">选择文件</div>
             </el-upload>               
         </div>
         <ul class="fileList">
@@ -77,6 +86,7 @@
     </div>
 </template>
 <script>
+import $ from "jquery";
     export default{
         data() {
             return {
@@ -102,12 +112,14 @@
                     'callback':'',
                 },
                 token:'',
+                isPdf:false, //是pdf类型文件
             }
         },
         mounted() {
             this.getOssSign(); // 获取后端给的签名
             this.token = sessionStorage.getItem('token');
-            console.log(this.token);
+            // $('.el-upload-dragger').css('background','red');
+            
         },
         methods:{
                         // 选择文件类型
@@ -122,10 +134,16 @@
             },
             // 删除
             deleteLis(index) {
-                this.fileNewList.splice(index,1)
+                this.fileNewList.splice(index,1);
+                if(this.fileNewList.length == 0&&this.otherFileList.length == 0) {
+                  this.$emit('getMsg',true); 
+                }
             },
             deleteOtherLis(index) {
-                this.otherFileList.splice(index,1)
+                this.otherFileList.splice(index,1);
+                if(this.otherFileList.length == 0&&this.fileNewList.length == 0) {
+                  this.$emit('getMsg',true); 
+                }
             },
             // 获取oss签名
             getOssSign() {
@@ -143,15 +161,6 @@
             },
             handleProgress(event, file, fileList){
                 this.progress = file.percentage;
-                if(this.progress > 50) {
-                    let timer = setInterval(()=>{
-                        this.progress += 2;
-                        if(this.progress>90){
-                            this.progress = 100;
-                            clearInterval(timer);
-                        }
-                    },50)
-                }
             },
             beforeAvatarUpload(file) {
                 this.getOssSign(); // 上传之前获取后端给的签名
@@ -163,22 +172,30 @@
                         type: 'warning',
                         message: '请上传pdf类型的文件'
                         });
+                    
                     return false;
                 }
                 this.ossParams.key = this.dir + file.name;
             },
             // 文件上传change事件
             handleChange(file, fileList){
+              
                 this.$emit('getMsg',false); // 子组件给父组件传递状态 //下面内容消失
+
                 // console.log(fileList)
                 fileList.forEach((e,i)=>{
                     let index = e.name.lastIndexOf("\.");
+                    // console.log(e.size);
                     let named = e.name.substring(index+1,e.name.length);
                     if(named == 'pdf') {
+                      this.isPdf = false;
+                      $('.el-upload-dragger').css('background','#007aef');
                         if(this.fileNewList.indexOf(e) == -1) {
                             this.fileNewList.push(e)
                         }
                     } else {
+                      this.isPdf = true;
+                      $('.el-upload-dragger').css('background','#fff');
                         if(this.otherFileList.indexOf(e) == -1) {
                             this.otherFileList.push(e)
                         }
@@ -206,6 +223,20 @@
             },
 
 
+        },
+        filters:{
+            formatSize(size) {
+            if (size > 1024 * 1024 * 1024 * 1024) {
+                return (size / 1024 / 1024 / 1024 / 1024).toFixed(2) + ' TB'
+            } else if (size > 1024 * 1024 * 1024) {
+                return (size / 1024 / 1024 / 1024).toFixed(2) + ' GB'
+            } else if (size > 1024 * 1024) {
+                return (size / 1024 / 1024).toFixed(2) + ' MB'
+            } else if (size > 1024) {
+                return (size / 1024).toFixed(2) + ' KB'
+            }
+            return size.toString() + ' B'
+            }
         }
     }
 </script>
@@ -226,6 +257,10 @@
     height:300px;
     border: 1px solid #ccc;
     background: #007aef;
+}
+.upload_active{
+  background:#fff;
+  border: 1px solid #007aef;
 }
 .text-center h4{
     height: 40px;
@@ -369,11 +404,23 @@ border: 2px solid #D34C2C !important;
   height: 280px;
     margin: 10px;
     border: 1px dashed #ccc;
+    position:relative;
+}
+.tips{
+  margin:100px auto 0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 .el-upload,.el-upload-dragger{
   height: 100%;
   width: 100%;
-  background: #007AEF;
+}
+.el-upload-dragger{
+  background:#007aef;
+}
+.el-upload-dragger-active{
+  background:#007aef;
 }
 .el-upload-list__item{
   height: 60px;

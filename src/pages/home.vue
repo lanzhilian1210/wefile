@@ -37,7 +37,6 @@
                 return arr2[1];
             },
             childEvent(status){
-                console.log(status);
                 this.isShow = status;  //上传文件后下面说明消失
             }
         }
