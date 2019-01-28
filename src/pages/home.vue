@@ -1,7 +1,7 @@
 <template>
 <div class="pageWapper">
     <fileHeader></fileHeader>
-    <fileInput @childEvent="childEvent"></fileInput>
+    <fileInput @getMsg="childEvent"></fileInput>
     <!-- 描述 -->
      <fileText v-show="isShow"></fileText> 
     <!-- <footerFile></footerFile>  -->
@@ -9,7 +9,7 @@
 </template>
 <script>
     import fileHeader from '../components/fileHeader';
-    import fileInput from '../components/fileInput2';
+    import fileInput from './demo';
     // import file from '../components/file';
     import fileText from '../components/fileText';
     import footerFile from '../components/footerFile';
@@ -19,13 +19,13 @@
         },
         data() {
             return {
-                isShow: false,
+                isShow: true,
                 token:'',
             }
         },
         created() {
  document.cookie = 'token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDc4Njg1NzQsIm5hbWUiOiLpmo_pgYfogIzlronllr3vvIEiLCJ1aWQiOjE3fQ.CbaUp3G_PrCGlkmt0JP6ovcZSA033AKlneT6HobejtE'
-        sessionStorage.setItem('token',this.getCookie());
+        // sessionStorage.setItem('token',this.getCookie());
         },
         mounted() {
            this.token = sessionStorage.getItem('token'); 
@@ -37,6 +37,7 @@
                 return arr2[1];
             },
             childEvent(status){
+                console.log(status);
                 this.isShow = status;  //上传文件后下面说明消失
             }
         }

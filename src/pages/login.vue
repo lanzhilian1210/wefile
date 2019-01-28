@@ -265,8 +265,8 @@ import '../config/wxLogin.js'
                         alert(res.data.detail)
                     }
                     if(res.data.code == '200') {
-                        console.log(res.data.data.token)
-                        sessionStorage.setItem('token',res.data.data.token);
+                        let token = res.data.data.token;
+                        sessionStorage.setItem('token',token);
                         alert('登录成功');
                         this.$router.push({path:'/'});
                     }

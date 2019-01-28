@@ -44,7 +44,7 @@ export default {
         },
         getTransforCount() {
             this.axios.get('/user/uselist').then(res=>{
-                console.log(res.data);
+                // console.log(res.data,'次数');
             }).catch(err=>{
                 console.log(err);
             })

@@ -19,6 +19,27 @@
         </ul>
     </div>
 </template>
+<script>
+export default {
+    data() {
+        return {
+
+        }
+    },
+    mounted() {
+        this.getOrder();
+    },
+    methods:{
+        getOrder() {
+            this.axios.get('/user/bill').then(res=>{
+                // console.log(res.data,'订单');
+            }).catch(err=>{
+                console.log(err);
+            })
+        }
+    }
+}
+</script>
 <style>
     .financialTitle{
         margin-top: 30px;

@@ -2,8 +2,8 @@
     <div>
         <div class="userAccountItems">
             <div class="userAccountitem1">
-                <!-- <div class="acountInfo">账号设置</div>
-                <div>完整的信息有助于更好的使用服务</div> -->
+                <div class="acountInfo">账号设置</div>
+                <div>完整的信息有助于更好的使用服务</div>
             </div>
             <div class="userAccountitem2">
                 <div class="userL">头像</div>
@@ -29,7 +29,7 @@
             <div class="userAccountitem3" v-show="!isDisplayPhone">
                 <div class="userL">手机号</div>
                 <div class="phone">{{phone}}</div>
-                <div class="userR" @click="changPhone">立即绑定</div>
+                <div class="userR" @click="changPhone" v-show="!phone">立即绑定</div>
             </div>
             <!-- 绑定手机号 -->
             <div class="userAccountitem4" v-show="isDisplayPhone">
@@ -44,22 +44,41 @@
                         </el-option>
                     </el-select>
                     <input type="text" class="subPhone" placeholder="请输入手机号" v-model="phone">
-                    <div class="getCode">获取验证码</div>
+                    <button class="getCode" @click="handleCode(phone)" :disabled="isDisable">{{testMobile}}</button>
                     <div class="cancelPhone" @click="cancelPhone">取消</div>
                 </div>
                 <div class="itemPhoneBt" style="width:100%;">
                    <div style="height:80px;">
-                       <span class="titlePhone" @click="handleCode(phone)">验证码</span>  
+                       <span class="titlePhone">验证码</span>  
                    <input type="text" class="subCode" placeholder="请输入验证码" v-model="subCode">
                    </div>
                    <div class="savePhone" @click="subChangePhone">保存</div>
                 </div>  
             </div>
-            <div class="userAccountitem5">
-                <div class="userL">邮箱</div>
-                <p class="msgNum">123123123</p>
-                <div class="changeInfo">修改</div>
+            <!-- 邮箱 -->
+            <!-- 邮箱绑定之前 -->
+            <div class="userAccountitem3" v-show="!isDisplayEmail">
+                <div class="userL">邮箱号</div>
+                <div class="phone">{{newEmail}}</div>
+                <div class="userR" @click="changEmail" v-show="!newEmail">立即绑定</div>
             </div>
+            <div class="userAccountitem4" v-show="isDisplayEmail">
+                <div class="itemPhoneTop" style="height:80px;">
+                    <span class="titlePhone">邮箱号</span>
+                    <input type="text" class="subPhone" placeholder="请输入邮箱号" v-model="email">
+                    <button class="getCode" @click="handleEmailCode" :disabled="isDisable">{{testMobile}}</button>
+                    <div class="cancelPhone" @click="cancelEmail">取消</div>
+                </div>
+                <div class="itemPhoneBt" style="width:100%;">
+                   <div style="height:80px;">
+                       <span class="titlePhone" >验证码</span>  
+                   <input type="text" class="subCode" placeholder="请输入验证码" v-model="subCode">
+                   </div>
+                   <div class="savePhone" @click="saveEmail">保存</div>
+                </div>  
+            </div>
+
+<!-- 微信 -->
             <div class="userAccountitem5" v-show="!isDisplayWx">
                 <div class="userL">微信</div>
                 <div class="userR" @click="addWx">立即绑定</div>
@@ -76,7 +95,7 @@
             <!-- 密码 -->
             <div class="userAccountitem2" v-show="!isDisplayPass">
                 <div class="userL">密码</div>
-                <p class="msgNum">123123123</p>
+                <p class="msgNum">{{passWord}}</p>
                 <div class="changeInfo" @click="changePass">修改</div>
             </div>
             <!-- 修改密码 -->
@@ -96,13 +115,17 @@
 export default {
     data() {
         return {
-            name:'陆先生',
+            isDisable:false,
+            name:'鲁先生',
             phone:'',
             subCode:'',
             imgSrc:'../../static/img/upload.jpg', //头像
             isDisplayName:false, //称呼
             isDisplayPhone:false, //电话号
+            isDisplayEmail:false,
             isDisplayWx:false, // 微信
+            email:123123,
+            passWord:'',
             isDisplayPass:false, //密码
             options: [{
                     value: '选项1',
@@ -121,9 +144,32 @@ export default {
             timer:null,
             changePassNum:'',
             changeNewPass:'',
+            auth_time:60,
+            newEmail:'',
+            testMobile:'获取验证码',
         }
     },
+    mounted() {
+        this.getUserInfo();
+    },
     methods:{
+        // 获取信息
+        getUserInfo() {
+            this.axios.get('/user/info').then(res=>{
+                // console.log(res.data.data);
+                if(!res.data.data.avatar){
+                     this.imgSrc =  this.imgSrc
+                } else {
+                this.imgSrc = res.data.data.avatar;
+                }
+                this.name = res.data.data.nick_name;
+                this.phone = res.data.data.phone_num;
+                this.email = res.data.data.email;
+                this.passWord = res.data.data.password;
+            }).catch(err=>{
+                console.log(err);
+            })
+        },
         // 上传图片
         handleUploadImg(e){
             let file = e.target.files[0];
@@ -134,15 +180,30 @@ export default {
                 reader.onload= function(e){
                     that.imgSrc = e.target.result;
                 }
-            }
+            };
+            console.log(this.imgSrc)
         },
         // 修改称呼
         changInfo() {
             this.isDisplayName = true;
         },
-        // 确认修改
+        // 确认修改称呼
         subChangeInfo() {
-            this.isDisplayName = false;
+            let data = {
+                type_update:1,
+                nick_name: this.name
+            };
+            this.axios.post('/user/update',data).then(res=>{
+                if(res.data.code == '200') {
+                    alert('姓名更新成功!'); 
+                } else {
+                    alert('姓名更新失败!');
+                }
+                this.isDisplayName = false;
+            }).catch(err=>{
+                console.log(err);
+            })
+            
         },
         cancelChangeInfo() {
             this.isDisplayName = false;
@@ -167,16 +228,19 @@ export default {
                 } else {
                     regLabel = this.label
                 }
-                let phone_num = regLabel+phone;
+                let phone_num = regLabel+this.phone;
                 let data = {
-                    phone_num:phone_num
+                    type_update:3,
+                    phone_num:phone_num,
+                    verify_code:this.subCode
                 }
-                this.axios.put('/user/register', data).then(res=>{
+                this.axios.post('/user/update', data).then(res=>{
                     if(res.data.code == '200') {
                         this.$message({
                         type: 'success',
                         message: '手机号码绑定成功'
                         });
+                        this.phone = phone_num;
                        this.isDisplayPhone = false;
                     }
                     if(res.data.code == '405') {
@@ -221,6 +285,73 @@ export default {
                     alert('服务器错误')
                 });
             },
+        // 绑定邮箱号
+        changEmail() {
+            this.isDisplayEmail = true;  
+        },
+        cancelEmail() {
+            this.isDisplayEmail = false;  
+        },
+        // 邮箱验证码
+            handleEmailCode() {
+                let reg = new RegExp("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$"); 
+                if(!reg.test(this.email)) {
+                    this.$message({
+                        type: 'warning',
+                        message: '邮箱账号有误，请重填'
+                        });  
+                    this.email = '';
+                    return false;   
+                } else {
+                this.isDisable = true;
+                let data = {
+                    email:this.email
+                }
+                this.axios.post('/user/email', data).then(res=>{
+                    if(res.data.code == '200') {
+                        this.timer = setInterval(()=>{
+                            this.auth_time --;
+                            this.testMobile = this.auth_time + 's';
+                            if (this.auth_time <= 0) {
+                                this.testMobile = '重发验证码';
+                                this.auth_time = 60;
+                                this.isDisable = false;
+                                clearInterval(this.timer);
+                            }
+                        },1000)
+                    } else {
+                        this.testMobile = '重发验证码';
+                        this.isDisable = false;
+                    }
+                    console.log(res);
+                }).catch(err=>{
+                    alert('服务器错误')
+                });
+            }
+            },
+        // 保存邮箱
+        saveEmail() {
+                let data = {
+                    type_update:2,
+                    email:this.email,
+                    verify_code:this.subCode
+                };
+                this.axios.post('/user/update', data).then(res=>{
+                    if(res.data.code == '200') {
+                        this.$message({
+                        type: 'success',
+                        message: '邮箱号码绑定成功'
+                        });
+                       this.newEmail = this.email;
+                       this.isDisplayPhone = false;
+                    }
+                    if(res.data.code == '405') {
+                        alert(res.data.detail)
+                    }
+                }).catch(err=>{
+                    console.log(err)
+                })
+        },
         // 取消修改手机号
         cancelPhone() {
            this.isDisplayPhone = false;  
@@ -262,6 +393,15 @@ export default {
             this.isDisplayPass = false;
         },
         saveNewPass() {
+            let data = {
+                type_update:2,
+                email:this.email,
+            };
+            this.axios.post('/user/update', data).then(res=>{
+
+            }).catch(err=>{
+
+            })
              this.isDisplayPass = false;
         }
 
@@ -269,10 +409,12 @@ export default {
 }
 </script>
 <style lang="">
-    .phone{
+    .phone,.subEmail{
         float: left;
         font: 18px/80px "\5FAE\8F6F\96C5\9ED1";
         margin-left: 40px;
+        outline: none;
+        border: none;
     }
     .userAccountItems{
         width: 840px;
