@@ -26,6 +26,22 @@
                       <P style="color:#007aef">重新选择</p>
                     </div>
                 </div>
+                <div class="tips" v-show="istoken">
+                    <span><svg class="icon" width="48px" height="48.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M513.550821 60.225663c-248.290923 0-449.579345 201.299679-449.579345 449.625394 0 248.296039 201.288422 449.594695 449.579345 449.594695 248.285806 0 449.640744-201.299679 449.640744-449.594695C963.192587 261.525342 761.836627 60.225663 513.550821 60.225663zM513.671571 917.673369c-225.166249 0-407.696446-182.53736-407.696446-407.706679S288.505321 102.254895 513.671571 102.254895c225.173412 0 407.703609 182.541453 407.703609 407.710772S738.844983 917.673369 513.671571 917.673369z" fill="#FFCC00" /><path d="M366.566188 453.597869c0 7.726985-9.204639 13.995759-20.559245 13.995759l0 0c-11.347442 0-20.551058-6.268774-20.551058-13.995759L325.455885 336.364841c0-7.726985 9.204639-13.995759 20.551058-13.995759l0 0c11.354606 0 20.559245 6.268774 20.559245 13.995759L366.566188 453.597869z" fill="#FFCC00" /><path d="M701.708178 453.597869c0 7.726985-9.203616 13.995759-20.560268 13.995759l0 0c-11.346419 0-20.550035-6.268774-20.550035-13.995759L660.597875 336.364841c0-7.726985 9.203616-13.995759 20.550035-13.995759l0 0c11.356652 0 20.560268 6.268774 20.560268 13.995759L701.708178 453.597869z" fill="#FFCC00" /><path d="M786.034748 516.844332c-8.266267 146.885372-126.999462 265.030166-272.453229 265.030166-145.459906 0-264.189008-118.144794-272.455275-265.030166l-46.750767 0c5.372358 171.733293 146.171104 309.314765 319.206042 309.314765 173.028798 0 313.831638-137.580448 319.203996-309.314765L786.034748 516.844332z" fill="#FFCC00" /></svg></span>
+                    <div style="margin-left:20px;">
+                      <p style="font-size:20px;color:#222;">同时上传多个文件仅限专业版用户</p>
+                      <p style="margin:10px 0;color:#222;">注册即送专业版次数</p>
+                      <P style="color:#007aef" @click="reLogin($event)">登录/注册</p>
+                    </div>
+                </div>
+                <div class="tips" v-show="isSize">
+                    <span><svg class="icon" width="48px" height="48.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M513.550821 60.225663c-248.290923 0-449.579345 201.299679-449.579345 449.625394 0 248.296039 201.288422 449.594695 449.579345 449.594695 248.285806 0 449.640744-201.299679 449.640744-449.594695C963.192587 261.525342 761.836627 60.225663 513.550821 60.225663zM513.671571 917.673369c-225.166249 0-407.696446-182.53736-407.696446-407.706679S288.505321 102.254895 513.671571 102.254895c225.173412 0 407.703609 182.541453 407.703609 407.710772S738.844983 917.673369 513.671571 917.673369z" fill="#FFCC00" /><path d="M366.566188 453.597869c0 7.726985-9.204639 13.995759-20.559245 13.995759l0 0c-11.347442 0-20.551058-6.268774-20.551058-13.995759L325.455885 336.364841c0-7.726985 9.204639-13.995759 20.551058-13.995759l0 0c11.354606 0 20.559245 6.268774 20.559245 13.995759L366.566188 453.597869z" fill="#FFCC00" /><path d="M701.708178 453.597869c0 7.726985-9.203616 13.995759-20.560268 13.995759l0 0c-11.346419 0-20.550035-6.268774-20.550035-13.995759L660.597875 336.364841c0-7.726985 9.203616-13.995759 20.550035-13.995759l0 0c11.356652 0 20.560268 6.268774 20.560268 13.995759L701.708178 453.597869z" fill="#FFCC00" /><path d="M786.034748 516.844332c-8.266267 146.885372-126.999462 265.030166-272.453229 265.030166-145.459906 0-264.189008-118.144794-272.455275-265.030166l-46.750767 0c5.372358 171.733293 146.171104 309.314765 319.206042 309.314765 173.028798 0 313.831638-137.580448 319.203996-309.314765L786.034748 516.844332z" fill="#FFCC00" /></svg></span>
+                    <div style="margin-left:20px;">
+                      <p style="font-size:20px;color:#222;">转换10M以上文件为专业版功能</p>
+                      <p style="margin:10px 0;color:#222;">注册即送专业版次数</p>
+                      <P style="color:#007aef" @click="reLogin($event)">登录/注册</p>
+                    </div>
+                </div>
                 <div class="text_file1" v-show="!isPdf">将PDF文件和Office文件相互转换</div>
                 <div class="text_file2" v-show="!isPdf">选择文件</div>
             </el-upload>               
@@ -73,15 +89,8 @@
                     </span>
                 </div>
             </div>
-            <div class="xFileBtn">开始转换</div>
+            <div class="xFileBtn" @click="handleTransfor">开始转换</div>
         </div>
-        <div v-show="otherFileList.length">以下文件不支持上传</div>
-        <ul class="fileList">
-            <li v-for="(item,index) in otherFileList" :key="index" @mouseenter="handleEnter(index)" @mouseleave="handleLeave(index)">
-                <img src="../../static/img/word.png" alt=""><span>{{item.name}}</span><img src="../../static/img/delete.png" class="delete" @click="deleteOtherLis(index)" :class="{'deleteActive': isDisplayDel === index}">
-            </li>
-        </ul>
-
         <div @click="submitUpload">上传至服务器</div>
     </div>
 </template>
@@ -93,10 +102,6 @@ import $ from "jquery";
                 fileNewList:[],// 存储pdf类型
                 otherFileList:[], //存储非pdf类型文件
                 isDisplayDel:-1,
-                size:0,
-                fileName: '',
-                current:-1,
-                currentShow:-1,
                 progress: 0,
                 chooseIndex: 0,
                 hasChooseFileBox:false,
@@ -111,20 +116,44 @@ import $ from "jquery";
                     'key':'',
                     'callback':'',
                 },
-                token:'',
+                istoken:false,
                 isPdf:false, //是pdf类型文件
+                isSize:false, //文件大小
+                fileType:'word', // 需转换的文件类型
+                fileName:'', // 文件名称
+                named:'', //文件类型
+                contName:'', //文件名内容
             }
         },
         mounted() {
             this.getOssSign(); // 获取后端给的签名
             this.token = sessionStorage.getItem('token');
+            if(!this.fileNewList.length){
+                this.$emit('getMsg',true); // 子组件给父组件传递状态
+            }
             // $('.el-upload-dragger').css('background','red');
             
         },
         methods:{
+            reLogin(ev) {
+                ev.stopPropagation();
+                this.$router.push('./login');
+            },
                         // 选择文件类型
             chooseFile(index){
                 this.chooseIndex = index;
+                if(index == 1) {
+                    this.fileType = 'word';
+                }
+                if(index == 2) {
+                    this.fileType = 'excel';
+                }
+                if(index == 3) {
+                    this.fileType = 'ppt';
+                }
+                if(index == 4) {
+                    this.fileType = 'html';
+                }
             },
             handleEnter(index){
                 this.isDisplayDel = index;
@@ -165,9 +194,9 @@ import $ from "jquery";
             beforeAvatarUpload(file) {
                 this.getOssSign(); // 上传之前获取后端给的签名
                 let index = file.name.lastIndexOf("\.");
-                let named = file.name.substring(index+1,file.name.length);
+                this.named = file.name.substring(index+1,file.name.length);
                 // 非pdf类型文件不能上传
-                if(named != 'pdf') {
+                if(this.named != 'pdf') {
                     this.$message({
                         type: 'warning',
                         message: '请上传pdf类型的文件'
@@ -179,30 +208,48 @@ import $ from "jquery";
             },
             // 文件上传change事件
             handleChange(file, fileList){
-              
-                this.$emit('getMsg',false); // 子组件给父组件传递状态 //下面内容消失
-
-                // console.log(fileList)
+                this.progress = 0;
+                let token = sessionStorage.getItem('token');  // token验证
+                let size = file.size/1024/1024;
+                // 超过10M的文件处理
+                if( size> 10 ) {
+                    this.isSize = true;
+                    $('.uploadBox').css('background','#fff');
+                    $('.el-upload-dragger').css('background','#fff');
+                    return false;
+                }
                 fileList.forEach((e,i)=>{
                     let index = e.name.lastIndexOf("\.");
-                    // console.log(e.size);
-                    let named = e.name.substring(index+1,e.name.length);
-                    if(named == 'pdf') {
+                    this.contName  = e.name.substring(0,index);
+                    this.named = e.name.substring(index+1,e.name.length);
+                    if(this.named == 'pdf') {
+                      this.fileName = e.name; 
                       this.isPdf = false;
                       $('.el-upload-dragger').css('background','#007aef');
+                      this.$emit('getMsg',false); // 子组件给父组件传递状态 //下面内容消失
                         if(this.fileNewList.indexOf(e) == -1) {
-                            this.fileNewList.push(e)
+                            this.fileNewList.push(e);
                         }
                     } else {
                       this.isPdf = true;
                       $('.el-upload-dragger').css('background','#fff');
-                        if(this.otherFileList.indexOf(e) == -1) {
-                            this.otherFileList.push(e)
-                        }
                     }
-                })
-                // console.log(this.fileNewList,'pdf');
-                // console.log(this.otherFileList,'other')
+                });
+                if(this.fileNewList.length>1) {
+                    if(token == null) {
+                        this.istoken = true;
+                        $('.uploadBox').css('background','#fff');
+                        $('.el-upload-dragger').css('background','#fff');
+                        this.fileNewList = [];
+                        this.$emit('getMsg',true); // 子组件给父组件传递状态 
+                        return false;
+                    } else {
+                        this.$emit('getMsg',false); // 子组件给父组件传递状态 //下面内容消失
+                    }
+                    
+                } 
+                    
+                 console.log(this.fileNewList,'pdf');
             },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
@@ -221,23 +268,21 @@ import $ from "jquery";
             //   console.log(this.ossParams);
                 this.$refs.upload.submit();
             },
-
+            handleTransfor(){
+                let data = {
+                    source_url:'https://converter-input.oss-cn-beijing.aliyuncs.com/files/'+this.fileName,
+                    source_type:this.named,
+                    dest_type:this.fileType,
+                    to:this.contName
+                };
+                this.axios.post('/user/jobcreate',data).then(res=>{
+                    console.log(res);
+                }).catch(err=>{
+                    console.log(err);
+                });
+            }
 
         },
-        filters:{
-            formatSize(size) {
-            if (size > 1024 * 1024 * 1024 * 1024) {
-                return (size / 1024 / 1024 / 1024 / 1024).toFixed(2) + ' TB'
-            } else if (size > 1024 * 1024 * 1024) {
-                return (size / 1024 / 1024 / 1024).toFixed(2) + ' GB'
-            } else if (size > 1024 * 1024) {
-                return (size / 1024 / 1024).toFixed(2) + ' MB'
-            } else if (size > 1024) {
-                return (size / 1024).toFixed(2) + ' KB'
-            }
-            return size.toString() + ' B'
-            }
-        }
     }
 </script>
 <style>
