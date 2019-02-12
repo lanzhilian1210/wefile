@@ -49,7 +49,10 @@
         <ul class="fileList">
             <li v-for="(item,index) in fileNewList" :key="index" @mouseenter="handleEnter(index)" @mouseleave="handleLeave(index)">
                 <div class="progress" :style="{'width':progress+'%'}"></div>
-                <img src="../../static/img/word.png" alt=""><span>{{item.name}}</span><img src="../../static/img/delete.png" class="delete" @click="deleteLis(index)" :class="{'deleteActive': isDisplayDel === index}">
+                <img src="../../static/img/word.png" alt="">
+                <span>{{item.name}}</span>
+                <img src="../../static/img/delete.png" v-show="!isTransforSuccess" class="delete" @click="deleteLis(index)" :class="{'deleteActive': isDisplayDel === index}">
+                <span v-show="isTransforSuccess" class="fileTransTxt">转换中...</span>
             </li>
         </ul>
         <!-- 选择转换目标文件 -->
@@ -123,6 +126,8 @@ import $ from "jquery";
                 fileName:'', // 文件名称
                 named:'', //文件类型
                 contName:'', //文件名内容
+                isTransforSuccess:false, //文件转换中
+                jobId:'', 
             }
         },
         mounted() {
@@ -190,6 +195,7 @@ import $ from "jquery";
             },
             handleProgress(event, file, fileList){
                 this.progress = file.percentage;
+                console.log(this.progress);
             },
             beforeAvatarUpload(file) {
                 this.getOssSign(); // 上传之前获取后端给的签名
@@ -209,6 +215,7 @@ import $ from "jquery";
             // 文件上传change事件
             handleChange(file, fileList){
                 this.progress = 0;
+                console.log('change');
                 let token = sessionStorage.getItem('token');  // token验证
                 let size = file.size/1024/1024;
                 // 超过10M的文件处理
@@ -245,18 +252,21 @@ import $ from "jquery";
                         return false;
                     } else {
                         this.$emit('getMsg',false); // 子组件给父组件传递状态 //下面内容消失
-                    }
-                    
-                } 
-                    
-                 console.log(this.fileNewList,'pdf');
+                    } 
+                }   
+                //  console.log(this.fileNewList,'pdf');
             },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
             },
             handleSuccess(response, file, fileList){
-                console.log(response);
+                console.log(file,'file');
+                this.progress = file.percentage;
+                console.log(this.progress);
                this.$message.warning('上传成功');
+            },
+            getFileStatus() {
+                this.axios.get('').then().catch();
             },
             // 上传失败
             handleError(err, file, fileList){
@@ -277,12 +287,23 @@ import $ from "jquery";
                     from:this.fileName
                 };
                 this.axios.post('/user/jobcreate',data).then(res=>{
-                    console.log(res);
+                    if(res.data.code == 200) {
+                        this.isTransforSuccess = true;
+                        console.log(res.data.data);
+                        this.jobId = res.data.data.Id;
+                        this.getTransforStatus();
+                    }
                 }).catch(err=>{
                     console.log(err);
                 });
+            },
+            getTransforStatus() {
+                this.axios.get(`/user/jobprocess?id=${this.jobId}`).then(res=>{
+                    console.log(res);
+                }).catch(err=>{
+                    console.log(err);
+                })
             }
-
         },
     }
 </script>
@@ -550,5 +571,11 @@ border: 2px solid #D34C2C !important;
     margin: 20px auto 0;
     text-align: center;
     color: #fff;
+}
+.fileTransTxt{
+    float: right;
+    line-height: 80px;
+    font-size: 18px;
+    margin-right: 20px;
 }
 </style>
