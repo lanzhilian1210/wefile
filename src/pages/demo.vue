@@ -5,7 +5,7 @@
                 class="upload-demo"
                 drag
                 ref="upload"
-                :auto-upload="false"
+                :auto-upload="true"
                 :show-file-list="false"
                 :before-upload="beforeAvatarUpload"
                 :on-error="handleError"
@@ -16,8 +16,8 @@
                 :on-remove="handleRemove"
                 :action="host"
                 :data="ossParams"
-                multiple>
-        
+                >
+        <!-- multiple -->
                 <div class="tips" v-show="isPdf">
                     <span><svg class="icon" width="48px" height="48.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M513.550821 60.225663c-248.290923 0-449.579345 201.299679-449.579345 449.625394 0 248.296039 201.288422 449.594695 449.579345 449.594695 248.285806 0 449.640744-201.299679 449.640744-449.594695C963.192587 261.525342 761.836627 60.225663 513.550821 60.225663zM513.671571 917.673369c-225.166249 0-407.696446-182.53736-407.696446-407.706679S288.505321 102.254895 513.671571 102.254895c225.173412 0 407.703609 182.541453 407.703609 407.710772S738.844983 917.673369 513.671571 917.673369z" fill="#FFCC00" /><path d="M366.566188 453.597869c0 7.726985-9.204639 13.995759-20.559245 13.995759l0 0c-11.347442 0-20.551058-6.268774-20.551058-13.995759L325.455885 336.364841c0-7.726985 9.204639-13.995759 20.551058-13.995759l0 0c11.354606 0 20.559245 6.268774 20.559245 13.995759L366.566188 453.597869z" fill="#FFCC00" /><path d="M701.708178 453.597869c0 7.726985-9.203616 13.995759-20.560268 13.995759l0 0c-11.346419 0-20.550035-6.268774-20.550035-13.995759L660.597875 336.364841c0-7.726985 9.203616-13.995759 20.550035-13.995759l0 0c11.356652 0 20.560268 6.268774 20.560268 13.995759L701.708178 453.597869z" fill="#FFCC00" /><path d="M786.034748 516.844332c-8.266267 146.885372-126.999462 265.030166-272.453229 265.030166-145.459906 0-264.189008-118.144794-272.455275-265.030166l-46.750767 0c5.372358 171.733293 146.171104 309.314765 319.206042 309.314765 173.028798 0 313.831638-137.580448 319.203996-309.314765L786.034748 516.844332z" fill="#FFCC00" /></svg></span>
                     <div style="margin-left:20px;">
@@ -51,8 +51,9 @@
                 <div class="progress" :style="{'width':progress+'%'}"></div>
                 <img src="../../static/img/word.png" alt="">
                 <span>{{item.name}}</span>
-                <img src="../../static/img/delete.png" v-show="!isTransforSuccess" class="delete" @click="deleteLis(index)" :class="{'deleteActive': isDisplayDel === index}">
-                <span v-show="isTransforSuccess" class="fileTransTxt">转换中...</span>
+                <img src="../../static/img/delete.png" class="delete"  v-show="!isTransforSuccess" @click="deleteLis(index)" :class="{'deleteActive': isDisplayDel === index}">
+                <a v-show="isTransforSuccess" class="fileTransTxt" ref="transfor" :href="newFile" :download="newFileName">文件转换中...</a>
+                <!-- <a v-show="!isTransforSuccess" class="fileTransTxt" :href="newFile" download="文件.docx">转换完成</a> -->
             </li>
         </ul>
         <!-- 选择转换目标文件 -->
@@ -94,7 +95,7 @@
             </div>
             <div class="xFileBtn" @click="handleTransfor">开始转换</div>
         </div>
-        <div @click="submitUpload">上传至服务器</div>
+        <!-- <div @click="submitUpload">上传至服务器</div> -->
     </div>
 </template>
 <script>
@@ -128,9 +129,15 @@ import $ from "jquery";
                 contName:'', //文件名内容
                 isTransforSuccess:false, //文件转换中
                 jobId:'', 
+                timer:null,
+                newFile:'', // 新文件路径
+                newFileName:''
             }
         },
-        mounted() {
+        updated() {
+            // console.log(this.$refs.transfor,1);
+        },
+        mounted() {  
             this.getOssSign(); // 获取后端给的签名
             this.token = sessionStorage.getItem('token');
             if(!this.fileNewList.length){
@@ -148,13 +155,13 @@ import $ from "jquery";
             chooseFile(index){
                 this.chooseIndex = index;
                 if(index == 1) {
-                    this.fileType = 'word';
+                    this.fileType = 'docx';
                 }
                 if(index == 2) {
-                    this.fileType = 'excel';
+                    this.fileType = 'xlsx';
                 }
                 if(index == 3) {
-                    this.fileType = 'ppt';
+                    this.fileType = 'pptx';
                 }
                 if(index == 4) {
                     this.fileType = 'html';
@@ -195,27 +202,29 @@ import $ from "jquery";
             },
             handleProgress(event, file, fileList){
                 this.progress = file.percentage;
-                console.log(this.progress);
+                // console.log(this.progress);
             },
             beforeAvatarUpload(file) {
-                this.getOssSign(); // 上传之前获取后端给的签名
+                this.getOssSign(); // 上传之前获取后端给的签名 
+                
                 let index = file.name.lastIndexOf("\.");
-                this.named = file.name.substring(index+1,file.name.length);
+                this.named = file.name.substring(index+1,file.name.length); 
                 // 非pdf类型文件不能上传
                 if(this.named != 'pdf') {
                     this.$message({
                         type: 'warning',
                         message: '请上传pdf类型的文件'
                         });
-                    
                     return false;
                 }
-                this.ossParams.key = this.dir + file.name;
+                let newName = this.$md5(file.name);
+                this.ossParams.key = this.dir + file.name;   
+                console.log(newName);
             },
             // 文件上传change事件
             handleChange(file, fileList){
                 this.progress = 0;
-                console.log('change');
+                // console.log('change');
                 let token = sessionStorage.getItem('token');  // token验证
                 let size = file.size/1024/1024;
                 // 超过10M的文件处理
@@ -260,13 +269,13 @@ import $ from "jquery";
                 console.log(file, fileList);
             },
             handleSuccess(response, file, fileList){
-                console.log(file,'file');
+                // console.log(file,'file');
                 this.progress = file.percentage;
-                console.log(this.progress);
-               this.$message.warning('上传成功');
+                // console.log(this.progress);
+               this.$message.success('上传成功');
             },
             getFileStatus() {
-                this.axios.get('').then().catch();
+                // this.axios.get('').then().catch();
             },
             // 上传失败
             handleError(err, file, fileList){
@@ -286,12 +295,14 @@ import $ from "jquery";
                     to:this.contName,
                     from:this.fileName
                 };
+                console.log(data)
                 this.axios.post('/user/jobcreate',data).then(res=>{
                     if(res.data.code == 200) {
                         this.isTransforSuccess = true;
-                        console.log(res.data.data);
                         this.jobId = res.data.data.Id;
-                        this.getTransforStatus();
+                        this.timer = setInterval(()=>{
+                            this.getTransforStatus();
+                        },5000)
                     }
                 }).catch(err=>{
                     console.log(err);
@@ -299,7 +310,24 @@ import $ from "jquery";
             },
             getTransforStatus() {
                 this.axios.get(`/user/jobprocess?id=${this.jobId}`).then(res=>{
-                    console.log(res);
+                    if(res.data.code == 200) {
+                        if(res.data.data.job_status == 3) {
+                            this.newFile = res.data.data.dest_url+'.'+res.data.data.dest_type;
+                            // console.log(this.newFile,'完成');
+                            this.isTransforSuccess = true;
+                            this.$nextTick(()=>{
+                                // console.log($('.fileTransTxt'))
+                                $('.fileTransTxt').html('请下载');
+                                
+                            });
+                            this.newFileName = res.data.data.to+'.'+ res.data.data.dest_type;
+                            console.log(this.newFileName);
+                            clearInterval(this.timer);
+                        }
+                        if(res.data.data.job_status == 2) {
+                            console.log('文件转换中');
+                        }
+                    }
                 }).catch(err=>{
                     console.log(err);
                 })
@@ -577,5 +605,9 @@ border: 2px solid #D34C2C !important;
     line-height: 80px;
     font-size: 18px;
     margin-right: 20px;
+    color: #222;
+}
+.delteActive{
+    opacity: 0;
 }
 </style>

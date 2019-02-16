@@ -10,9 +10,9 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from '@/config/public.js'
 import VueWebsocket from "vue-websocket";
-
+import md5 from 'js-md5';
 /* eslint-disable no-new */
-
+Vue.prototype.$md5 = md5;
 Vue.use(ElementUI);
 // Vue.use(VueWebsocket);
 Vue.prototype.axios = axios;
