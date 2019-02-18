@@ -50,7 +50,8 @@
             <li v-for="(item,index) in fileNewList" :key="index" @mouseenter="handleEnter(index)" @mouseleave="handleLeave(index)">
                 <div class="progress" :style="{'width':progress+'%'}"></div>
                 <img src="../../static/img/word.png" alt="">
-                <span>{{item.name}}</span>
+                <span v-show="!fileSuccess">{{item.name}}</span>
+                <span v-show="fileSuccess">{{newFileName}}</span>
                 <img src="../../static/img/delete.png" class="delete"  v-show="!isTransforSuccess" @click="deleteLis(index)" :class="{'deleteActive': isDisplayDel === index}">
                 <a v-show="isTransforSuccess" class="fileTransTxt" ref="transfor" :href="newFile" :download="newFileName">文件转换中...</a>
                 <!-- <a v-show="!isTransforSuccess" class="fileTransTxt" :href="newFile" download="文件.docx">转换完成</a> -->
@@ -131,7 +132,8 @@ import $ from "jquery";
                 jobId:'', 
                 timer:null,
                 newFile:'', // 新文件路径
-                newFileName:''
+                newFileName:'',
+                fileSuccess:false, //文件名称未改变前
             }
         },
         updated() {
@@ -315,6 +317,7 @@ import $ from "jquery";
                             this.newFile = res.data.data.dest_url+'.'+res.data.data.dest_type;
                             // console.log(this.newFile,'完成');
                             this.isTransforSuccess = true;
+                            this.fileSuccess = true;
                             this.$nextTick(()=>{
                                 // console.log($('.fileTransTxt'))
                                 $('.fileTransTxt').html('请下载');
@@ -479,6 +482,13 @@ border: 2px solid #D34C2C !important;
      float: left;
 }
 .fileList li span:nth-of-type(1){
+    font-size: 18px;
+    line-height: 80px;
+    margin-left: 20px;
+    color: #222;
+    float: left;
+}
+.fileList li span:nth-of-type(2){
     font-size: 18px;
     line-height: 80px;
     margin-left: 20px;

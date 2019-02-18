@@ -3,9 +3,9 @@
         <div class="logo"></div>
         <div class="logoText">文档转换真简单</div>
         <div class="banner">
-            <div class="ban1" @click="handlePrice">定价</div>
+            <div class="ban1" @click="handlePrice">定价1</div>
             <div class="shu"></div>
-            <div class="ban2" @click="handleLogin">登录</div>
+            <div class="ban2" @click="handleLogin">登录1</div>
         </div>
     </div>
 </template>
