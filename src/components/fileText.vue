@@ -10,49 +10,49 @@
 <script>
     let img = [ 
         {
-            img:require('../../static/img/1.jpg'),
+            img:require('../../static/img/1.svg'),
             title:'云端转换真方便',
-            text:'无需在您的设备上安装软件，只需直接上传文件并选择需要的转换类型即可完成文件转换操作，其它由我们云端程序完成。'
+            text:'无需在您的设备上安装软件，直接上传文件并选择需要的格式即可完成文件转换操作，其它由我们来完成。'
         },
         {
-            img:require('../../static/img/2.jpg'),
+            img:require('../../static/img/2.svg'),
             title:'值得信赖的转换技术',
-            text:'想要完美进行的pdf文档转换并不容易，我们只使用市面上公认的优异转换技术确保满意的转换输出。'
+            text:'想要完美进行PDF文档转换并不容易，我们只使用市面上公认的优异技术确保满意的转换效果。'
         },
         {
-            img:require('../../static/img/3.jpg'),
-            title:'弹性价格',
-            text:'为偶尔使用的匿名用户提供了每小时两次免费的服务。如果需要更多的转换，也可按照需要使用我们的付费服务。'
+            img:require('../../static/img/3.svg'),
+            title:'按需使用',
+            text:'免费用户每天可以转换两次。如果需要更多的次数，可根据需要选择会员套餐服务。'
         },
         {
-            img:require('../../static/img/4.jpg'),
-            title:'将pdf转换为Word',
-            text:'pdf文件并不可直接修改内容，使用在线转换器将其转换为docx格式可再次编辑。'
+            img:require('../../static/img/docx.svg'),
+            title:'PDF转Word',
+            text:'pdf文件一般并不可直接修改内容，使用在线转换器将其转换为docx格式，然后再次编辑。'
         },
         {
-            img:require('../../static/img/5.jpg'),
-            title:'将pdf转换为ppt',
-            text:'想要编辑或使用ppt演示文件，直接将pdf文件上传至在线转换器并选择pptx格式输出即可。'
+            img:require('../../static/img/pptx.svg'),
+            title:'PDF转PPT',
+            text:'想要使用ppt或编辑演示文件，直接将pdf文件上传至在线转换器并选择ppt输出即可。'
         },
         {
-            img:require('../../static/img/6.jpg'),
-            title:'提取pdf中的电子表格',
+            img:require('../../static/img/xlsx.svg'),
+            title:'PDF转Excel',
             text:'使用在线转换技术，可以识别pdf中的表格。并将每一表格存储为Excel工作表。'
         },
         {
-            img:require('../../static/img/7.jpg'),
-            title:'将pdf转换为图片',
-            text:'可以将每页pdf转换为图片，也可将pdf文件中的图片单独提取。'
+            img:require('../../static/img/pdf.svg'),
+            title:'Office转PDF',
+            text:'将Word转为PDF、Excel转为PDF、PPT转为PDF、HTML转为PDF，以便于演示及不同设备查看。'
         },
         {
-            img:require('../../static/img/8.jpg'),
-            title:'自定义转换选项',
-            text:'除了直接在线转换文件格式，您也可以增加转换选项，从而控制最终转换文件。'
+            img:require('../../static/img/4.svg'),
+            title:'文件安全',
+            text:'所有文件将会在完成转换的24小时内删除，并不会在系统中额外保留。系统使用阿里云服务。'
         },
         {
-            img:require('../../static/img/9.jpg'),
-            title:'不断增加的转换类型',
-            text:'更多的文档格式转换在持续增加中，请收藏我们的网站并关注动态。'
+            img:require('../../static/img/5.svg'),
+            title:'不断增加的转换',
+            text:'更多的类型文件转换在持续增加中，请收藏我们的网站并关注动态。'
         }
         ];
     export default{
@@ -91,5 +91,6 @@
     font: 18px/24px "微软雅黑";
     color: #333;
     margin-top: 30px;
+    text-align: center;
 }
 </style>

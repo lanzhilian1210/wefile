@@ -227,7 +227,7 @@
         position: relative;
 	}
 	.logoText{
-		display: none;
+		/* display: none; */
 	}
 	.textCon{
 		margin-bottom: 80px;

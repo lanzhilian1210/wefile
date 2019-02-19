@@ -1,11 +1,13 @@
 <template>
     <div class="header-wrapper">
         <div class="logo"></div>
-        <div class="logoText">文档转换真简单</div>
+        <div class="logoText">
+            <img src="../../static/img/logo_text.svg" alt="" style="height:18px;width:116px;">
+        </div>
         <div class="banner">
-            <div class="ban1" @click="handlePrice">定价1</div>
+            <div class="ban1" @click="handlePrice">定价</div>
             <div class="shu"></div>
-            <div class="ban2" @click="handleLogin">登录1</div>
+            <div class="ban2" @click="handleLogin">登录</div>
         </div>
     </div>
 </template>
@@ -31,7 +33,7 @@ export default {
 .logo{
     width: 160px;
     height: 40px;
-    background:dodgerblue;
+    background:url('../../static/img/wefile-logo.svg') center no-repeat;
     display: inline-block;
     margin-left:30px;
 }
