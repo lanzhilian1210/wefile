@@ -314,7 +314,7 @@ import $ from "jquery";
                 this.axios.get(`/user/jobprocess?id=${this.jobId}`).then(res=>{
                     if(res.data.code == 200) {
                         if(res.data.data.job_status == 3) {
-                            this.newFile = res.data.data.dest_url+'.'+res.data.data.dest_type;
+                            this.newFile = res.data.data.dest_url;
                             // console.log(this.newFile,'完成');
                             this.isTransforSuccess = true;
                             this.fileSuccess = true;

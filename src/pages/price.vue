@@ -1,6 +1,6 @@
 <template>
     <div class="priceContent">
-        <!-- <fileHeader></fileHeader> -->
+        <fileHeader></fileHeader>
         <div class="priceText">
             使用专业版获得更完美体验
         </div>
@@ -126,7 +126,8 @@
     margin: auto;
     text-align: center;
     font: 14px/40px "微软雅黑";
-    color: #008AEF;
+    background: #007AEF;
+    color: #fff;
     cursor: pointer;
 }
 .buyFile{
