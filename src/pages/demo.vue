@@ -16,6 +16,7 @@
                 :on-remove="handleRemove"
                 :action="host"
                 :data="ossParams"
+                :multiple="multiple"
                 >
         <!-- multiple -->
                 <div class="tips" v-show="isPdf">
@@ -127,13 +128,14 @@ import $ from "jquery";
                 fileType:'word', // 需转换的文件类型
                 fileName:'', // 文件名称
                 named:'', //文件类型
-                contName:'', //文件名内容
                 isTransforSuccess:false, //文件转换中
                 jobId:'', 
                 timer:null,
                 newFile:'', // 新文件路径
                 newFileName:'',
                 fileSuccess:false, //文件名称未改变前
+                multiple:true,
+                transforFileName:[]
             }
         },
         updated() {
@@ -203,12 +205,13 @@ import $ from "jquery";
                 })
             },
             handleProgress(event, file, fileList){
-                this.progress = file.percentage;
-                // console.log(this.progress);
+                fileList.forEach((e,i)=>{
+                    // console.log(e.percentage);
+                    this.progress = e.percentage;
+                })
             },
             beforeAvatarUpload(file) {
                 this.getOssSign(); // 上传之前获取后端给的签名 
-                
                 let index = file.name.lastIndexOf("\.");
                 this.named = file.name.substring(index+1,file.name.length); 
                 // 非pdf类型文件不能上传
@@ -219,9 +222,7 @@ import $ from "jquery";
                         });
                     return false;
                 }
-                let newName = this.$md5(file.name);
                 this.ossParams.key = this.dir + file.name;   
-                console.log(newName);
             },
             // 文件上传change事件
             handleChange(file, fileList){
@@ -230,16 +231,17 @@ import $ from "jquery";
                 let token = sessionStorage.getItem('token');  // token验证
                 let size = file.size/1024/1024;
                 // 超过10M的文件处理
-                if( size> 10 ) {
-                    this.isSize = true;
-                    $('.uploadBox').css('background','#fff');
-                    $('.el-upload-dragger').css('background','#fff');
-                    return false;
-                }
+                // if( size> 10 ) {
+                //     this.isSize = true;
+                //     $('.uploadBox').css('background','#fff');
+                //     $('.el-upload-dragger').css('background','#fff');
+                //     return false;
+                // }
                 fileList.forEach((e,i)=>{
                     let index = e.name.lastIndexOf("\.");
-                    this.contName  = e.name.substring(0,index);
                     this.named = e.name.substring(index+1,e.name.length);
+                    
+                    
                     if(this.named == 'pdf') {
                       this.fileName = e.name; 
                       this.isPdf = false;
@@ -247,11 +249,16 @@ import $ from "jquery";
                       this.$emit('getMsg',false); // 子组件给父组件传递状态 //下面内容消失
                         if(this.fileNewList.indexOf(e) == -1) {
                             this.fileNewList.push(e);
+                            this.transforFileName.push({
+                                countName:e.name.substring(0,index),
+                                fileName:e.name
+                            });
                         }
                     } else {
                       this.isPdf = true;
                       $('.el-upload-dragger').css('background','#fff');
                     }
+                    
                 });
                 if(this.fileNewList.length>1) {
                     if(token == null) {
@@ -272,8 +279,9 @@ import $ from "jquery";
             },
             handleSuccess(response, file, fileList){
                 // console.log(file,'file');
-                this.progress = file.percentage;
-                // console.log(this.progress);
+                 fileList.forEach((e,i)=>{
+                    this.progress = e.percentage;
+                })
                this.$message.success('上传成功');
             },
             getFileStatus() {
@@ -286,19 +294,27 @@ import $ from "jquery";
             },
             // 上传文件至服务器
             submitUpload() {
-            //   console.log(this.ossParams);
                 this.$refs.upload.submit();
             },
             handleTransfor(){
+                let fileData = [];
+                this.transforFileName.forEach((e,i)=>{
+                    fileData.push({
+                        source_url:'https://converter-input.oss-cn-beijing.aliyuncs.com/files/'+e.fileName,
+                        to:e.countName +'.'+ this.fileType,
+                        form:e.fileName
+                    })
+                })
                 let data = {
-                    source_url:'https://converter-input.oss-cn-beijing.aliyuncs.com/files/'+this.fileName,
                     source_type:this.named,
                     dest_type:this.fileType,
-                    to:this.contName,
-                    from:this.fileName
+                    files:[
+                    ]
                 };
+                data.files = fileData;
                 console.log(data)
                 this.axios.post('/user/jobcreate',data).then(res=>{
+                    console.log(res.data);
                     if(res.data.code == 200) {
                         this.isTransforSuccess = true;
                         this.jobId = res.data.data.Id;
@@ -313,6 +329,7 @@ import $ from "jquery";
             getTransforStatus() {
                 this.axios.get(`/user/jobprocess?id=${this.jobId}`).then(res=>{
                     if(res.data.code == 200) {
+                        console.log(res.data.data);
                         if(res.data.data.job_status == 3) {
                             this.newFile = res.data.data.dest_url;
                             // console.log(this.newFile,'完成');
