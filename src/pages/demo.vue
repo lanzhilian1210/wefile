@@ -58,6 +58,7 @@
                 <!-- <a v-show="!isTransforSuccess" class="fileTransTxt" :href="newFile" download="文件.docx">转换完成</a> -->
             </li>
         </ul>
+        <div class="allTransBtn" v-show="allTransBtnStatus">下载全部已转换文件</div>
         <!-- 选择转换目标文件 -->
         <div class="chooseFileBox" v-show="fileNewList.length">
             <div class="fileTile">选择需要的文件</div>
@@ -135,7 +136,8 @@ import $ from "jquery";
                 newFileName:'',
                 fileSuccess:false, //文件名称未改变前
                 multiple:true,
-                transforFileName:[]
+                transforFileName:[],
+                allTransBtnStatus:false,
             }
         },
         updated() {
@@ -302,7 +304,7 @@ import $ from "jquery";
                     fileData.push({
                         source_url:'https://converter-input.oss-cn-beijing.aliyuncs.com/files/'+e.fileName,
                         to:e.countName +'.'+ this.fileType,
-                        form:e.fileName
+                        from:e.fileName
                     })
                 })
                 let data = {
@@ -329,8 +331,11 @@ import $ from "jquery";
             getTransforStatus() {
                 this.axios.get(`/user/jobprocess?id=${this.jobId}`).then(res=>{
                     if(res.data.code == 200) {
-                        console.log(res.data.data);
                         if(res.data.data.job_status == 3) {
+                            console.log(res.data.data);
+                            if(res.data.data.length>1) {
+                                this.allTransBtnStatus = true;
+                            }
                             this.newFile = res.data.data.dest_url;
                             // console.log(this.newFile,'完成');
                             this.isTransforSuccess = true;
@@ -340,7 +345,7 @@ import $ from "jquery";
                                 $('.fileTransTxt').html('请下载');
                                 
                             });
-                            this.newFileName = res.data.data.to+'.'+ res.data.data.dest_type;
+                            this.newFileName = res.data.data.to;  // 文件名
                             console.log(this.newFileName);
                             clearInterval(this.timer);
                         }
@@ -636,5 +641,15 @@ border: 2px solid #D34C2C !important;
 }
 .delteActive{
     opacity: 0;
+}
+.allTransBtn{
+    height: 50px;
+    width: 280px;
+    background: #007AEF;
+    font: 20px/50px "微软雅黑";
+    color: #fff;
+    text-align: center;
+    margin-left: 75%;
+    cursor: pointer;
 }
 </style>
