@@ -6,7 +6,7 @@ const price  = () => import('@/pages/price')
 const priceChoice = () => import('@/pages/priceChoice')
 const about = () => import('@/pages/about') //about组件
 const user = () => import('@/pages/user') // 个人中心
-const demo = () => import('@/pages/demo') // 上传demo
+const upload = () => import('@/pages/upload') // 上传upload
 Vue.use(Router)
 
 const router = new Router({
@@ -18,9 +18,9 @@ const router = new Router({
       component: Home
     },
     {
-      path: '/demo',
-      name: 'demo',
-      component: demo
+      path: '/upload',
+      name: 'upload',
+      component: upload
     },
     {
       path: '/login',

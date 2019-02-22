@@ -9,7 +9,7 @@
 </template>
 <script>
     import fileHeader from '../components/fileHeader';
-    import fileInput from './demo';
+    import fileInput from './upload';
     // import file from '../components/file';
     import fileText from '../components/fileText';
     import footerFile from '../components/footerFile';

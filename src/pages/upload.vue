@@ -319,6 +319,7 @@ import $ from "jquery";
                         this.isTransforSuccess = true;
                         this.jobId = res.data.data.Id;
                         this.timer = setInterval(()=>{
+                            // 获取转换状态
                             this.getTransforStatus();
                         },5000)
                     }
@@ -331,6 +332,7 @@ import $ from "jquery";
                     if(res.data.code == 200) {
                         console.log(res.data.data);
                         if(res.data.data.job_status == 3) {
+                            // 多个文件上传修改;
                             this.newFile = res.data.data.dest_url;
                             // console.log(this.newFile,'完成');
                             this.isTransforSuccess = true;
